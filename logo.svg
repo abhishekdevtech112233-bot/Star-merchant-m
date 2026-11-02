@@ -1,0 +1,43 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Deep Obsidian Black App Squircle Background -->
+  <rect width="512" height="512" rx="116" fill="#050507"/>
+  
+  <!-- Outer 80-Karat Liquid Gold Rim / Border Line -->
+  <rect x="12" y="12" width="488" height="488" rx="104" stroke="url(#liquidGold80k)" stroke-width="5" opacity="0.8"/>
+
+  <!-- Glowing Radial Core -->
+  <circle cx="256" cy="240" r="160" fill="url(#goldGlow)" opacity="0.25"/>
+
+  <!-- Modern Geometric Storefront / Vault Shield Base -->
+  <path d="M156 210L256 140L356 210V360C356 371.046 347.046 380 336 380H176C164.954 380 156 371.046 156 360V210Z" fill="url(#storeBg)" stroke="url(#liquidGold80k)" stroke-width="6" stroke-linejoin="round" filter="url(#dropShadow)"/>
+
+  <!-- Storefront Glass / Inner Counter Display (Clean & Uncluttered) -->
+  <path d="M196 240H316V340H196V240Z" fill="#050507" opacity="0.85"/>
+
+  <!-- The Crown Star (Core Authority) positioned sharply above -->
+  <path d="M256 95L285.317 155.459L352.203 165.183L304.101 212.041L315.633 278.817L256 247.459L196.367 278.817L207.899 212.041L159.797 165.183L226.683 155.459L256 95Z" fill="url(#liquidGold80k)" filter="url(#dropShadow)"/>
+
+  <!-- Gradients & Lighting Matrix Definitions -->
+  <defs>
+    <linearGradient id="liquidGold80k" x1="156" y1="95" x2="356" y2="380" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFBEB"/>
+      <stop offset="25%" stop-color="#FDE68A"/>
+      <stop offset="50%" stop-color="#F59E0B"/>
+      <stop offset="80%" stop-color="#D97706"/>
+      <stop offset="100%" stop-color="#78350F"/>
+    </linearGradient>
+    <linearGradient id="storeBg" x1="156" y1="140" x2="356" y2="380" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1F2937"/>
+      <stop offset="100%" stop-color="#0B0B0F"/>
+    </linearGradient>
+    <radialGradient id="goldGlow" cx="0.5" cy="0.5" r="0.5" fx="0.5" fy="0.5">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#050507" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="dropShadow" x="10" y="10" width="492" height="492" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#D97706" flood-opacity="0.4"/>
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+</svg>
+ 
