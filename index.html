@@ -145,8 +145,33 @@
     .gate-message { margin-top: 15px; font-size: 12px; font-weight: 700; min-height: 18px; }
     .msg-red { color: #F87171; }
     .msg-green { color: #34D399; }
+
+    /* PWA touch behavior: preserve the dashboard's vertical scrolling. */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((registration) => {
+            console.log('Merchant ServiceWorker registered with scope: ', registration.scope);
+          })
+          .catch((error) => {
+            console.log('Merchant ServiceWorker registration failed: ', error);
+          });
+      });
+    }
+  </script>
 </head>
 <body>
 
