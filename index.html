@@ -1581,5 +1581,19 @@
       } catch (e) {}
     }
   </script>
+
+  <!-- 🛑 TEMPORARY TESTING/PWA INSTALL BYPASS: remove this block to re-enable login -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const loginGate =
+        document.getElementById('mainLoginGate') ||
+        document.getElementById('authModalOverlay') ||
+        document.querySelector('.auth-modal-overlay');
+      if (loginGate) {
+        loginGate.style.display = 'none';
+        loginGate.setAttribute('aria-hidden', 'true');
+      }
+    });
+  </script>
 </body>
 </html>
