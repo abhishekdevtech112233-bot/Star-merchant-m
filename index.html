@@ -131,8 +131,8 @@
     .nav-item.active { color: #111827; font-weight: 800; }
     .nav-item .icon { display: flex; align-items: center; justify-content: center; height: 30px; margin-bottom: 2px; }
     .nav-item .icon svg { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .nav-item:not(.active) .icon svg { opacity: 0.4; transform: scale(0.85); filter: grayscale(100%); }
-    .nav-item.active .icon svg { opacity: 1; transform: scale(1.15); filter: sepia(1) saturate(5) hue-rotate(5deg) brightness(1.2) drop-shadow(0 4px 10px rgba(212, 175, 55, 0.6)); }
+    .nav-item:not(.active) .icon svg { opacity: 1; transform: scale(0.85); filter: none; }
+    .nav-item.active .icon svg { opacity: 1; transform: scale(1.15); filter: none; }
     
     .login-lock-layer { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; background: #FFF; border-radius: 12px; border: 1px solid #E5E7EB; text-align: center; }
     .login-gate-overlay { position: fixed; inset: 0; background: #0b0b0f; z-index: 999997; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; transition: opacity 0.5s ease, visibility 0.5s; }
@@ -145,8 +145,33 @@
     .gate-message { margin-top: 15px; font-size: 12px; font-weight: 700; min-height: 18px; }
     .msg-red { color: #F87171; }
     .msg-green { color: #34D399; }
+
+    /* PWA touch behavior: preserve the dashboard's vertical scrolling. */
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-user-select: none;
+      user-select: none;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then((registration) => {
+            console.log('Merchant ServiceWorker registered with scope: ', registration.scope);
+          })
+          .catch((error) => {
+            console.log('Merchant ServiceWorker registration failed: ', error);
+          });
+      });
+    }
+  </script>
 </head>
 <body>
 
@@ -160,9 +185,6 @@
         <stop offset="80%" stop-color="#111827"/>
         <stop offset="100%" stop-color="#374151"/>
       </linearGradient>
-      <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
-        <feDropShadow dx="0" dy="3" stdDeviation="2" flood-opacity="0.4"/>
-      </filter>
     </defs>
   </svg>
 
@@ -184,9 +206,9 @@
       <div class="brand-title"><span class="star-badge">★</span> STAR MERCHANT</div>
       <div class="header-right-box">
         <button class="lang-switch-btn" onclick="toggleLanguage()" id="langSwitchBtn">🌐 EN</button>
-        <div class="header-msg-btn" onclick="openQueryModal()" title="Support">💬</div>
+        <div class="header-msg-btn" onclick="openQueryModal()" title="Support"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 15 C 10 15, 10 50, 15 65 L 35 65 L 50 85 L 65 65 L 85 65 C 90 65, 90 15, 85 15 Z"/></svg></div>
         <div class="header-msg-btn" onclick="toggleNotifications()" title="Notifications" style="position:relative;">
-          🔔
+          <svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 50 10 C 35 10, 30 25, 30 40 L 25 65 L 75 65 L 70 40 C 70 25, 65 10, 50 10 Z M 40 75 A 10 10 0 0 0 60 75 Z"/></svg>
           <span id="notiBadgeCount" class="noti-badge">0</span>
         </div>
       </div>
@@ -250,13 +272,13 @@
         <div style="font-size:13px; font-weight:800; color:#111827; margin-bottom:8px;" data-i18n="reel_upload_title">📹 नई रील (वीडियो) अपलोड करें</div>
         <div class="input-group"><label data-i18n="reel_cap_label">रील कैप्शन</label><input type="text" id="uploadReelCaptionInput" placeholder="जैसे: बेस्ट ऑफर!" data-i18n-ph="reel_cap_ph"></div>
         <input type="file" id="reelVideoFileInput" accept="video/mp4,video/webm,video/*" style="display: none;" onchange="handleMediaSelection(event, 'video')">
-        <button type="button" class="btn-compact" onclick="document.getElementById('reelVideoFileInput').click()" style="background: #2563EB; color: #fff; width: 100%;" data-i18n="reel_btn">📁 गैलरी से वीडियो चुनें (Max 30s)</button>
+        <button type="button" class="btn-compact" onclick="document.getElementById('reelVideoFileInput').click()" style="background: #2563EB; color: #fff; width: 100%;"> <span data-i18n="reel_btn">गैलरी से वीडियो चुनें (Max 30s)</span></button>
       </div>
       <div class="studio-upload-box" style="margin-top: 10px;">
         <div style="font-size:13px; font-weight:800; color:#111827; margin-bottom:8px;" data-i18n="post_upload_title">🖼️ नई फोटो पोस्ट अपलोड करें</div>
         <div class="input-group"><label data-i18n="post_cap_label">पोस्ट कैप्शन</label><input type="text" id="uploadPostCaptionInput" placeholder="जैसे: नई वैरायटी!" data-i18n-ph="post_cap_ph"></div>
         <input type="file" id="postImageFileInput" accept="image/jpeg,image/png,image/webp,image/*" style="display: none;" onchange="handleMediaSelection(event, 'image')">
-        <button type="button" class="btn-compact" onclick="document.getElementById('postImageFileInput').click()" style="background: #059669; color: #fff; width: 100%;" data-i18n="post_btn">📷 फोटो गैलरी से चुनें और पोस्ट करें</button>
+        <button type="button" class="btn-compact" onclick="document.getElementById('postImageFileInput').click()" style="background: #059669; color: #fff; width: 100%;"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 30 L 30 30 L 38 20 L 62 20 L 70 30 L 85 30 C 90 30, 90 85, 85 85 L 15 85 C 10 85, 10 30, 15 30 Z M 50 40 A 18 18 0 1 0 50 76 A 18 18 0 1 0 50 40 Z"/></svg> <span data-i18n="post_btn">फोटो गैलरी से चुनें और पोस्ट करें</span></button>
       </div>
       <div class="reel-progress-container" id="reelProgressBarContainer">
         <div class="reel-progress-fill" id="reelProgressBarFill"></div>
@@ -302,32 +324,32 @@
     <!-- 5. Profile Tab -->
     <main id="tab-profile" class="tab-screen">
       <div class="profile-card">
-        <button class="profile-top-action-btn" id="profileAuthBtn" onclick="openAuthPrompt()">🔒 Login</button>
+        <button class="profile-top-action-btn" id="profileAuthBtn" onclick="openAuthPrompt()"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 30 40 L 30 25 C 30 10, 70 10, 70 25 L 70 40 Z M 20 40 L 80 40 L 80 90 L 20 90 Z"/></svg> Login</button>
         <div class="profile-banner-box"><img id="merchantBannerDisplay" src="" alt="Store Banner"></div>
         <div class="name-title-text" id="merchantStoreNameDisplay">Store Name (Guest)</div>
         <div style="font-size:11px; color:#6B7280; margin-top:2px; line-height:1.35; text-align:center; overflow-wrap:anywhere; word-break:break-word; padding:0 10px;" id="merchantSubLocDisplay">Delhi</div>
-        <div style="margin-top: 12px; text-align: left;"><button type="button" id="profileEditAccessBtn" class="btn-compact" onclick="openEditSectionAccess()" style="background:#F3F4F6; color:#4B5563; border:1px solid #D1D5DB; width:100%;" title="Edit Information">ⓘ Edit Information</button></div>
+        <div style="margin-top: 12px; text-align: left;"><button type="button" id="profileEditAccessBtn" class="btn-compact" onclick="openEditSectionAccess()" style="background:#F3F4F6; color:#4B5563; border:1px solid #D1D5DB; width:100%;" title="Edit Information"> Edit Information</button></div>
       </div>
     </main>
 
     <!-- Separate Edit Section: requires login; banner changes are available here only -->
     <main id="tab-edit-section" class="tab-screen">
       <div class="action-card">
-        <div class="action-card-title">✏️ Edit Section</div>
+        <div class="action-card-title"> Edit Section</div>
         <div class="profile-banner-box"><img id="editMerchantBannerDisplay" src="" alt="Store Banner"></div>
         <div class="progress-container" id="bannerProgressBarContainer"><div class="progress-bar-fill" id="bannerProgressBarFill"></div><div class="progress-text" id="bannerProgressText">0%</div></div>
         <div style="margin-bottom: 14px;">
           <input type="file" id="bannerUploadInput" accept="image/*" style="display: none;" onchange="uploadAutoFitMerchantBanner(event)">
-          <button type="button" class="btn-compact" onclick="document.getElementById('bannerUploadInput').click()" style="background: #2563EB; color: #fff; width: 100%;" data-i18n="banner_btn">🖼 बैनर बदलें</button>
+          <button type="button" class="btn-compact" onclick="document.getElementById('bannerUploadInput').click()" style="background: #2563EB; color: #fff; width: 100%;"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 30 L 30 30 L 38 20 L 62 20 L 70 30 L 85 30 C 90 30, 90 85, 85 85 L 15 85 C 10 85, 10 30, 15 30 Z M 50 40 A 18 18 0 1 0 50 76 A 18 18 0 1 0 50 40 Z"/></svg> <span data-i18n="banner_btn">बैनर बदलें</span></button>
         </div>
         <div class="input-group"><label data-i18n="store_name_label">दुकान का नाम</label><input type="text" id="editStoreName" disabled value=""></div>
         <div class="input-group"><label data-i18n="store_addr_label">पूरा पता</label><input type="text" id="editStoreAddress" disabled value=""></div>
         <div class="input-group" style="margin-top: 10px;"><label data-i18n="store_phone_label">फोन नंबर</label><input type="text" id="editStorePhone" disabled value=""></div>
         <div class="btn-row" style="margin-top: 14px;">
-          <button type="button" class="btn-compact" id="editProfileBtn" onclick="toggleEditProfile()" style="background: #4B5563; color: #fff; flex: 1;" disabled data-i18n="edit_btn">✏️ एडिट</button>
+          <button type="button" class="btn-compact" id="editProfileBtn" onclick="toggleEditProfile()" style="background: #4B5563; color: #fff; flex: 1;" disabled> <span data-i18n="edit_btn">एडिट</span></button>
           <button type="button" class="btn-compact btn-approve-comp" id="saveProfileBtn" onclick="saveMerchantProfile()" style="flex: 1; display: none;" data-i18n="save_btn">💾 सेव</button>
         </div>
-        <div class="btn-row" style="margin-top: 10px;"><button type="button" class="btn-compact" id="changePinBtn" onclick="openChangePinPrompt()" style="background: #DC2626; color: #fff; width: 100%; display: none;" data-i18n="pin_btn">🔐 पिन बदलें</button></div>
+        <div class="btn-row" style="margin-top: 10px;"><button type="button" class="btn-compact" id="changePinBtn" onclick="openChangePinPrompt()" style="background: #DC2626; color: #fff; width: 100%; display: none;"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 30 40 L 30 25 C 30 10, 70 10, 70 25 L 70 40 Z M 20 40 L 80 40 L 80 90 L 20 90 Z"/></svg> <span data-i18n="pin_btn">पिन बदलें</span></button></div>
       </div>
     </main>
 
@@ -336,8 +358,8 @@
       <div class="nav-item active" onclick="switchMerchantTab('home', this)">
         <div class="icon">
           <svg width="26" height="26" viewBox="0 0 100 100">
-            <path d="M 50 15 L 15 45 L 20 45 L 20 85 L 80 85 L 80 45 L 85 45 Z" fill="none" stroke="url(#metal3D)" stroke-width="8" stroke-linejoin="round" filter="url(#dropShadow)"/>
-            <rect x="40" y="60" width="20" height="25" fill="url(#metal3D)" filter="url(#dropShadow)"/>
+            <path d="M 50 15 L 15 45 L 20 45 L 20 85 L 80 85 L 80 45 L 85 45 Z" fill="none" stroke="#111827" stroke-width="8" stroke-linejoin="round"/>
+            <rect x="40" y="60" width="20" height="25" fill="#111827"/>
           </svg>
         </div>
         <div data-i18n="nav_home">होम</div>
@@ -345,9 +367,8 @@
       <div class="nav-item" onclick="switchMerchantTab('manage-reels', this)">
         <div class="icon">
           <svg width="26" height="26" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="url(#metal3D)" stroke-width="10" filter="url(#dropShadow)"/>
-            <circle cx="50" cy="50" r="22" fill="none" stroke="url(#metal3D)" stroke-width="10" filter="url(#dropShadow)"/>
-            <circle cx="50" cy="50" r="6" fill="url(#metal3D)" filter="url(#dropShadow)"/>
+            <rect x="10" y="20" width="55" height="60" rx="8" fill="#111827"/>
+            <polygon points="70,35 90,25 90,75 70,65" fill="#111827"/>
           </svg>
         </div>
         <div data-i18n="nav_studio">स्टूडियो</div>
@@ -355,10 +376,10 @@
       <div class="nav-item" onclick="switchMerchantTab('network', this)">
         <div class="icon">
           <svg width="26" height="26" viewBox="0 0 100 100">
-            <circle cx="50" cy="25" r="14" fill="url(#metal3D)" filter="url(#dropShadow)"/>
-            <circle cx="25" cy="75" r="14" fill="url(#metal3D)" filter="url(#dropShadow)"/>
-            <circle cx="75" cy="75" r="14" fill="url(#metal3D)" filter="url(#dropShadow)"/>
-            <path d="M 42 38 L 28 62 M 58 38 L 72 62 M 38 75 L 62 75" fill="none" stroke="url(#metal3D)" stroke-width="6" stroke-linecap="round" filter="url(#dropShadow)"/>
+            <circle cx="50" cy="25" r="14" fill="#111827"/>
+            <circle cx="25" cy="75" r="14" fill="#111827"/>
+            <circle cx="75" cy="75" r="14" fill="#111827"/>
+            <path d="M 42 38 L 28 62 M 58 38 L 72 62 M 38 75 L 62 75" fill="none" stroke="#111827" stroke-width="6" stroke-linecap="round"/>
           </svg>
         </div>
         <div data-i18n="nav_network">नेटवर्क</div>
@@ -366,14 +387,14 @@
       <div class="nav-item" onclick="switchMerchantTab('calculator', this)">
         <div class="icon">
           <svg width="26" height="26" viewBox="0 0 100 100">
-            <rect x="20" y="15" width="60" height="70" rx="8" fill="none" stroke="url(#metal3D)" stroke-width="8" filter="url(#dropShadow)"/>
-            <rect x="32" y="30" width="36" height="14" rx="4" fill="url(#metal3D)" filter="url(#dropShadow)"/>
-            <circle cx="35" cy="58" r="5" fill="url(#metal3D)" filter="url(#dropShadow)"/>
-            <circle cx="50" cy="58" r="5" fill="url(#metal3D)" filter="url(#dropShadow)"/>
-            <circle cx="65" cy="58" r="5" fill="url(#metal3D)" filter="url(#dropShadow)"/>
-            <circle cx="35" cy="73" r="5" fill="url(#metal3D)" filter="url(#dropShadow)"/>
-            <circle cx="50" cy="73" r="5" fill="url(#metal3D)" filter="url(#dropShadow)"/>
-            <circle cx="65" cy="73" r="5" fill="url(#metal3D)" filter="url(#dropShadow)"/>
+            <rect x="20" y="15" width="60" height="70" rx="8" fill="none" stroke="#111827" stroke-width="8"/>
+            <rect x="32" y="30" width="36" height="14" rx="4" fill="#111827"/>
+            <circle cx="35" cy="58" r="5" fill="#111827"/>
+            <circle cx="50" cy="58" r="5" fill="#111827"/>
+            <circle cx="65" cy="58" r="5" fill="#111827"/>
+            <circle cx="35" cy="73" r="5" fill="#111827"/>
+            <circle cx="50" cy="73" r="5" fill="#111827"/>
+            <circle cx="65" cy="73" r="5" fill="#111827"/>
           </svg>
         </div>
         <div data-i18n="nav_calc">कैलकुलेटर</div>
@@ -381,9 +402,8 @@
       <div class="nav-item" onclick="switchMerchantTab('profile', this)">
         <div class="icon">
           <svg width="26" height="26" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="url(#metal3D)" stroke-width="10" filter="url(#dropShadow)"/>
-            <circle cx="50" cy="35" r="14" fill="url(#metal3D)" filter="url(#dropShadow)"/>
-            <path d="M 22 80 C 22 55, 35 52, 50 52 C 65 52, 78 55, 78 80" fill="url(#metal3D)" filter="url(#dropShadow)"/>
+            <circle cx="50" cy="32" r="20" fill="#111827"/>
+            <path d="M 16 85 C 16 62, 31 56, 50 56 C 69 56, 84 62, 84 85 Z" fill="#111827"/>
           </svg>
         </div>
         <div data-i18n="nav_profile">प्रोफाइल</div>
@@ -395,8 +415,8 @@
   <div class="reel-action-sheet" id="reelActionSheet" onclick="closeReelActionSheetOnOutside(event)">
     <div class="reel-action-card">
       <div class="action-sheet-title" data-i18n="sheet_title">⚙ मीडिया विकल्प</div>
-      <button class="action-sheet-btn success" onclick="executeMediaAction('fullwatch')" data-i18n="sheet_watch">👁️ पूरा देखें / प्ले करें</button>
-      <button class="action-sheet-btn" style="background:#EFF6FF; color:#1D4ED8; border-color:#BFDBFE;" onclick="executeMediaAction('edit')" data-i18n="sheet_edit">✏️ कैप्शन एडिट करें</button>
+      <button class="action-sheet-btn success" onclick="executeMediaAction('fullwatch')"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><rect x="10" y="20" width="55" height="60" rx="8"/><polygon points="70,35 90,25 90,75 70,65"/></svg> <span data-i18n="sheet_watch">पूरा देखें / प्ले करें</span></button>
+      <button class="action-sheet-btn" style="background:#EFF6FF; color:#1D4ED8; border-color:#BFDBFE;" onclick="executeMediaAction('edit')"> <span data-i18n="sheet_edit">कैप्शन एडिट करें</span></button>
       <button class="action-sheet-btn danger" onclick="executeMediaAction('delete')" data-i18n="sheet_del">🗑 डिलीट करें</button>
       <button class="btn-compact" style="background:#E5E7EB; color:#1F2937; margin-top:8px; width:100%; padding:10px;" onclick="closeReelActionSheet()" data-i18n="sheet_back">वापस जाएं</button>
     </div>
@@ -467,32 +487,32 @@
         reel_upload_title: "📹 नई रील (वीडियो) अपलोड करें",
         reel_cap_label: "रील कैप्शन",
         reel_cap_ph: "जैसे: बेस्ट ऑफर!",
-        reel_btn: "📁 गैलरी से वीडियो चुनें (Max 30s)",
+        reel_btn: "गैलरी से वीडियो चुनें (Max 30s)",
         post_upload_title: "🖼️ नई फोटो पोस्ट अपलोड करें",
         post_cap_label: "पोस्ट कैप्शन",
         post_cap_ph: "जैसे: नई वैरायटी!",
-        post_btn: "📷 फोटो गैलरी से चुनें और पोस्ट करें",
+        post_btn: "फोटो गैलरी से चुनें और पोस्ट करें",
         grid_title: "🎦 रील्स और पोस्ट्स ग्रिड (टैप या लॉन्ग-प्रेस करें)",
         login_req_studio: "कृपया पहले प्रोफाइल टैब से लॉगिन करें।",
         net_title: "🤝 B2B मर्चेंट स्टॉक नेटवर्क",
         net_sub: "आसपास के दुकानदारों से सुरक्षित संपर्क करें।",
         notes_title: "📝 मर्चेंट नोट्स & हिसाब किताब",
-        banner_btn: "🖼 बैनर बदलें",
+        banner_btn: "बैनर बदलें",
         reg_store_btn: "➕ नई दुकान रजिस्टर करें",
         store_name_label: "दुकान का नाम",
         store_addr_label: "पूरा पता",
         store_phone_label: "फोन नंबर",
-        edit_btn: "✏️ एडिट",
+        edit_btn: "एडिट",
         save_btn: "💾 सेव",
-        pin_btn: "🔐 पिन बदलें",
+        pin_btn: "पिन बदलें",
         nav_home: "होम",
         nav_studio: "स्टूडियो",
         nav_network: "नेटवर्क",
         nav_calc: "कैलकुलेटर",
         nav_profile: "प्रोफाइल",
         sheet_title: "⚙ मीडिया विकल्प",
-        sheet_watch: "👁️ पूरा देखें / प्ले करें",
-        sheet_edit: "✏️ कैप्शन एडिट करें",
+        sheet_watch: "पूरा देखें / प्ले करें",
+        sheet_edit: "कैप्शन एडिट करें",
         sheet_del: "🗑 डिलीट करें",
         sheet_back: "वापस जाएं",
         fullview_heading: "📝 पोस्ट / रील कैप्शन",
@@ -523,32 +543,32 @@
         reel_upload_title: "📹 Upload New Reel (Video)",
         reel_cap_label: "Reel Caption",
         reel_cap_ph: "e.g., Best Offer!",
-        reel_btn: "📁 Select Video from Gallery (Max 30s)",
+        reel_btn: "Select Video from Gallery (Max 30s)",
         post_upload_title: "🖼️ Upload New Photo Post",
         post_cap_label: "Post Caption",
         post_cap_ph: "e.g., New collection!",
-        post_btn: "📷 Select Photo from Gallery & Post",
+        post_btn: "Select Photo from Gallery & Post",
         grid_title: "🎦 Reels & Posts Grid (Tap or Long-press)",
         login_req_studio: "Please login from the Profile tab first.",
         net_title: "🤝 B2B Merchant Stock Network",
         net_sub: "Connect securely with nearby merchants.",
         notes_title: "📝 Merchant Notes & Ledger",
-        banner_btn: "🖼 Change Store Banner",
+        banner_btn: "Change Store Banner",
         reg_store_btn: "➕ Register a New Store",
         store_name_label: "Store Name",
         store_addr_label: "Complete Address",
         store_phone_label: "Phone Number",
-        edit_btn: "✏️ Edit",
+        edit_btn: "Edit",
         save_btn: "💾 Save",
-        pin_btn: "🔐 Change PIN",
+        pin_btn: "Change PIN",
         nav_home: "Home",
         nav_studio: "Studio",
         nav_network: "Network",
         nav_calc: "Calculator",
         nav_profile: "Profile",
         sheet_title: "⚙ Media Options",
-        sheet_watch: "👁️ Watch Full / Play",
-        sheet_edit: "✏️ Edit Caption",
+        sheet_watch: "Watch Full / Play",
+        sheet_edit: "Edit Caption",
         sheet_del: "🗑 Delete",
         sheet_back: "Go Back",
         fullview_heading: "📝 Post / Reel Caption",
@@ -802,8 +822,8 @@
                 <div style="flex:1;"><div style="font-size:15px; font-weight:900; color:#111827;">${escapeHtml(m.store_name)}</div><div style="font-size:11px; color:#6B7280;">📍 ${escapeHtml(m.address || 'Delhi')}</div></div>
               </div>
               <div style="display:flex; gap:10px; margin-top:14px;">
-                <a href="${callLink}" style="flex:1; text-align:center; background:#EFF6FF; color:#1D4ED8; padding:10px; border-radius:10px; font-weight:800; text-decoration:none;">${currentLang === 'en' ? '📞 Call' : '📞 कॉल'}</a>
-                <a href="${waLink}" target="_blank" style="flex:1; text-align:center; background:#ECFDF5; color:#059669; padding:10px; border-radius:10px; font-weight:800; text-decoration:none;">${currentLang === 'en' ? '💬 Message' : '💬 मैसेज'}</a>
+                <a href="${callLink}" style="flex:1; text-align:center; background:#EFF6FF; color:#1D4ED8; padding:10px; border-radius:10px; font-weight:800; text-decoration:none;">${currentLang === 'en' ? ' Call' : ' कॉल'}</a>
+                <a href="${waLink}" target="_blank" style="flex:1; text-align:center; background:#ECFDF5; color:#059669; padding:10px; border-radius:10px; font-weight:800; text-decoration:none;">${currentLang === 'en' ? '<svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 15 C 10 15, 10 50, 15 65 L 35 65 L 50 85 L 65 65 L 85 65 C 90 65, 90 15, 85 15 Z"/></svg> Message' : '<svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 15 C 10 15, 10 50, 15 65 L 35 65 L 50 85 L 65 65 L 85 65 C 90 65, 90 15, 85 15 Z"/></svg> मैसेज'}</a>
               </div>
             </div>
           `;
@@ -827,7 +847,7 @@
       document.getElementById('editStoreName').value = data.store_name || '';
       document.getElementById('editStoreAddress').value = data.address || '';
       document.getElementById('editStorePhone').value = data.phone || '';
-      document.getElementById('profileAuthBtn').innerText = "🔓 Logout";
+      document.getElementById('profileAuthBtn').innerHTML = `<svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 30 40 L 30 25 C 30 10, 70 10, 70 25 L 70 40 Z M 20 40 L 80 40 L 80 90 L 20 90 Z"/></svg> Logout`;
       document.getElementById('editProfileBtn').disabled = false;
       document.getElementById('changePinBtn').style.display = 'inline-flex';
       document.getElementById('studioSubTitle').innerText = `Merchant ID: ${data.id}`;
@@ -870,7 +890,7 @@
                onmouseup="cancelLongPress()"
                ontouchend="cancelLongPress()">
             ${isVideo
-              ? `<video src="${encodeURI(mediaUrl)}#t=0.1" preload="metadata" muted playsinline></video><div class="media-type-badge">${currentLang === 'en' ? '🎬 Reel' : '🎬 रील'}</div>`
+              ? `<video src="${encodeURI(mediaUrl)}#t=0.1" preload="metadata" muted playsinline></video><div class="media-type-badge"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><rect x="10" y="20" width="55" height="60" rx="8"/><polygon points="70,35 90,25 90,75 70,65"/></svg> ${currentLang === 'en' ? 'Reel' : 'रील'}</div>`
               : `<img src="${encodeURI(mediaUrl)}" alt="Post"><div class="media-type-badge">${currentLang === 'en' ? '🖼️ Post' : '🖼️ पोस्ट'}</div>`
             }
             ${capText ? `<div class="media-caption-tag">${escapeHtml(capText)}</div>` : ''}
@@ -1055,7 +1075,7 @@
           <button class="btn-compact btn-approve-comp" style="flex:1;" onclick="submitCustomPromptValue()">${currentLang === 'en' ? 'Save' : 'सेव करें'}</button>
         </div>
       `;
-      showCustomAlert(currentLang === 'en' ? "✏️ Edit Caption" : "✏️ कैप्शन एडिट करें", currentLang === 'en' ? "Update caption for your post or reel:" : "अपने पोस्ट या रील का नया कैप्शन लिखें:", popupHtml, true);
+      showCustomAlert(currentLang === 'en' ? " Edit Caption" : " कैप्शन एडिट करें", currentLang === 'en' ? "Update caption for your post or reel:" : "अपने पोस्ट या रील का नया कैप्शन लिखें:", popupHtml, true);
       window._customPromptCallback = onSaveCallback;
       setTimeout(() => {
         const inp = document.getElementById('customPromptInput');
@@ -1241,7 +1261,7 @@
       document.getElementById('editStoreAddress').disabled = !isEditing;
       document.getElementById('editStorePhone').disabled = !isEditing;
       document.getElementById('saveProfileBtn').style.display = isEditing ? 'inline-flex' : 'none';
-      document.getElementById('editProfileBtn').innerText = isEditing ? (currentLang === 'en' ? 'Cancel' : 'रद्द करें') : t('edit_btn');
+      document.getElementById('editProfileBtn').innerHTML = isEditing ? (currentLang === 'en' ? 'Cancel' : 'रद्द करें') : ` ${t('edit_btn')}`;
     }
 
     async function saveMerchantProfile() {
@@ -1345,7 +1365,7 @@
         return `
           <div style="background:#FFFFFF; border:1px solid #D1D5DB; border-radius:8px; padding:10px; margin-bottom:8px; text-align:left; position:relative;">
             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; ${allowDismiss ? 'padding-right:18px;' : ''}">
-              <div style="color:#111827; font-weight:800; font-size:12px; width:74%;">💬 ${escapeHtml(q.query_text)}</div>
+              <div style="color:#111827; font-weight:800; font-size:12px; width:74%;"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 15 C 10 15, 10 50, 15 65 L 35 65 L 50 85 L 65 65 L 85 65 C 90 65, 90 15, 85 15 Z"/></svg> ${escapeHtml(q.query_text)}</div>
               ${statusBadge}
             </div>
             ${dismissBtn}
