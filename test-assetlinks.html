@@ -24,8 +24,9 @@
             const resultBox = document.getElementById('resultBox');
             resultBox.innerHTML = "जांच की जा रही है...";
             
-            const targetUrl = window.location.origin + '/.well-known/assetlinks.json';
             
+            const targetUrl = "https://abhishekdevtech112233-bot.github.io/Star-merchant-m/.well-known/assetlinks.json";
+
             try {
                 const response = await fetch(targetUrl);
                 const contentType = response.headers.get("content-type");
