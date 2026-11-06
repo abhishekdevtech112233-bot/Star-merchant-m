@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="hi" id="htmlRoot">
 <head>
   <meta name="mobile-web-app-capable" content="yes">
@@ -93,6 +93,16 @@
     .add-note-btn { background: #2563EB; color: #FFF; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(37,99,235,0.3); }
     .note-item-row { background: #FFFBEB; border: 1px solid #FDE68A; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #111827; }
     .note-delete-btn { background: none; border: none; color: #DC2626; font-weight: 800; cursor: pointer; font-size: 14px; }
+    .merchant-query-table-wrap { width: 100%; overflow-x: auto; border: 1px solid #E5E7EB; border-radius: 10px; background: #FFFFFF; }
+    .merchant-query-table { width: 100%; min-width: 430px; border-collapse: collapse; font-size: 11px; text-align: left; }
+    .merchant-query-table th { background: #111827; color: #FFFFFF; padding: 9px 8px; font-size: 10px; font-weight: 900; white-space: nowrap; }
+    .merchant-query-table td { padding: 9px 8px; border-bottom: 1px solid #E5E7EB; color: #374151; vertical-align: top; line-height: 1.4; }
+    .merchant-query-table tr:last-child td { border-bottom: none; }
+    .merchant-query-table .query-cell { min-width: 145px; color: #111827; font-weight: 700; white-space: pre-wrap; word-break: break-word; }
+    .merchant-query-table .reply-cell { min-width: 150px; white-space: pre-wrap; word-break: break-word; }
+    .query-status-pill { display: inline-block; padding: 3px 6px; border-radius: 5px; font-size: 9px; font-weight: 900; white-space: nowrap; }
+    .query-status-pending { background: #FEF3C7; color: #B45309; }
+    .query-status-replied { background: #D1FAE5; color: #047857; }
     .btn-row { display: flex; gap: 6px; margin-top: 8px; }
     .btn-compact { padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 800; cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 4px; width: 100%; transition: opacity 0.2s; }
     .btn-compact:active { opacity: 0.8; }
@@ -339,7 +349,7 @@
         <div class="profile-banner-box"><img id="editMerchantBannerDisplay" src="" alt="Store Banner"></div>
         <div class="progress-container" id="bannerProgressBarContainer"><div class="progress-bar-fill" id="bannerProgressBarFill"></div><div class="progress-text" id="bannerProgressText">0%</div></div>
         <div style="margin-bottom: 14px;">
-          <input type="file" id="bannerUploadInput" accept="image/*" style="display: none;" onchange="uploadAutoFitMerchantBanner(event)">
+          <input type="file" id="bannerUploadInput" accept="image/*" style="display: none;" onchange="handleBannerFileSelection(event)">
           <button type="button" class="btn-compact" onclick="document.getElementById('bannerUploadInput').click()" style="background: #2563EB; color: #fff; width: 100%;"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 30 L 30 30 L 38 20 L 62 20 L 70 30 L 85 30 C 90 30, 90 85, 85 85 L 15 85 C 10 85, 10 30, 15 30 Z M 50 40 A 18 18 0 1 0 50 76 A 18 18 0 1 0 50 40 Z"/></svg> <span data-i18n="banner_btn">बैनर बदलें</span></button>
         </div>
         <div class="input-group"><label data-i18n="store_name_label">दुकान का नाम</label><input type="text" id="editStoreName" disabled value=""></div>
@@ -436,6 +446,28 @@
     </div>
   </div>
 
+  <!-- Banner Crop Popup -->
+  <div class="crop-popup-overlay" id="bannerCropPopupOverlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:999999; align-items:center; justify-content:center; padding:16px;">
+    <div class="crop-popup-card" style="background:#16161a; width:100%; max-width:440px; border-radius:20px; padding:20px; text-align:center; border:1px solid #27272a;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="font-size:15px; font-weight:900; color:#fff;">🖼️ बैनर पोजीशन सेट करें</div>
+        <button type="button" id="glassToggleBtn" onclick="toggleGuidanceGlass()" style="background:#27272a; color:#F59E0B; border:1px solid #F59E0B; padding:5px 10px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;">👁️ गाइडेंस ग्लास: ऑन</button>
+      </div>
+      <div style="font-size:11px; color:#9CA3AF; margin-bottom:14px;">ग्लास फ्रेम के अंदर अपनी दुकान का सही हिस्सा ड्रैग करके सेट करें:</div>
+      <div id="bannerDragContainer" style="position:relative; width:100%; height:260px; background:#000; border-radius:12px; overflow:hidden; cursor:grab; touch-action:none; display:flex; align-items:center; justify-content:center;">
+        <img id="bannerSourceImage" src="" alt="Source" style="position:absolute; transform-origin:center; user-select:none; pointer-events:none;">
+        <div id="guidanceGlassOverlay" style="position:absolute; inset:0; background:rgba(0,0,0,0.55); pointer-events:none; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(2px); transition: opacity 0.3s ease;">
+          <div style="width:100%; height:150px; border:2px dashed #F59E0B; background:rgba(255,255,255,0.08); box-shadow:0 0 0 9999px rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; color:#FFD700; font-size:11px; font-weight:800; text-shadow:0 1px 3px rgba(0,0,0,0.9);">✨ इस फ्रेम के अंदर बैनर सेट करें</div>
+        </div>
+      </div>
+      <div style="margin:14px 0;"><input type="range" id="bannerZoomRange" min="0.5" max="3" step="0.05" value="1" style="width:100%; accent-color:#F59E0B;" oninput="adjustBannerZoom(this.value)"></div>
+      <div style="display:flex; gap:10px;">
+        <button onclick="closeBannerCropPopup()" style="flex:1; padding:12px; background:#27272a; color:#fff; border:none; border-radius:10px; font-weight:800; cursor:pointer;">रद्द करें</button>
+        <button onclick="saveCroppedBannerToSupabase()" style="flex:1; padding:12px; background:#F59E0B; color:#0b0b0f; border:none; border-radius:10px; font-weight:900; cursor:pointer;">✅ सेव करके अपलोड करें</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Custom Popup -->
   <div class="custom-popup-overlay" id="customPopupOverlay" onclick="closePopupOnOutsideClick(event)">
     <div class="custom-popup-card">
@@ -449,7 +481,12 @@
   <script>
     const SUPABASE_URL = 'https://gejrzpflcuvlbpedliwq.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_dw9J2AX0nd3SxPrRy9JGCg_YqS8ZfUF';
-    const supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+    // डुप्लीकेट एरर रोकने के लिए existing client को reuse करें
+    if (!window.supabaseClient) {
+      window.supabaseClient = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+    }
+    const supabaseClient = window.supabaseClient;
     
     let currentMerchantData = null;
     let isEditing = false;
@@ -680,20 +717,22 @@
       let totalActiveEvents = 0;
 
       try {
-        const { data: qData } = await supabaseClient
+        const { data: qData, error: qErr } = await supabaseClient
           .from('merchant_queries')
           .select('id, status, reply_text, staff_reply')
           .eq('merchant_name', currentMerchantData.store_name);
 
-        if (qData && qData.length > 0) {
+        if (!qErr && qData && qData.length > 0) {
           const repliedCount = qData.filter(q => (q.reply_text && String(q.reply_text).trim() !== '') || (q.staff_reply && String(q.staff_reply).trim() !== '') || q.status === 'Replied').length;
           totalActiveEvents += repliedCount;
         }
-      } catch (e) {}
+      } catch (e) {
+        console.log('Query fetch skipped or table missing:', e.message);
+      }
 
       try {
-        const { data: aData } = await supabaseClient.from('broadcast_center').select('id');
-        if (aData && aData.length > 0) {
+        const { data: aData, error: aErr } = await supabaseClient.from('broadcast_center').select('id');
+        if (!aErr && aData && aData.length > 0) {
           totalActiveEvents += aData.length;
         }
       } catch (e) {}
@@ -959,6 +998,13 @@
       }
     }
 
+    function sanitizeMediaUrl(rawUrl) {
+      if (!rawUrl) return '';
+      let formattedUrl = String(rawUrl).trim();
+      formattedUrl = formattedUrl.replace(/([^:]\/)\/+/g, "$1");
+      return encodeURI(formattedUrl);
+    }
+
     async function executeMediaUploadToSupabase(file, type, event) {
       const caption = type === 'video'
         ? (document.getElementById('uploadReelCaptionInput').value.trim() || (currentLang === 'en' ? "Special Offer" : "विशेष ऑफर"))
@@ -992,7 +1038,7 @@
         pbText.innerText = currentLang === 'en' ? 'Saving to feed...' : 'फीड में सेव किया जा रहा है...';
 
         const { data: publicUrlData } = supabaseClient.storage.from(uploadSuccessBucket).getPublicUrl(fileName);
-        finalPublicUrl = publicUrlData.publicUrl;
+        finalPublicUrl = sanitizeMediaUrl(publicUrlData.publicUrl);
 
         let insertedRow = null;
         const payloadFull = {
@@ -1159,42 +1205,170 @@
       document.getElementById('merchantFullViewOverlay').classList.remove('open');
     }
 
-    async function uploadAutoFitMerchantBanner(event) {
-      const file = event.target.files[0];
-      if (!file || !currentMerchantData) return;
+    let pendingBannerFile = null;
+    let bannerObjectUrl = '';
+    let bannerCropState = { scale: 1, baseScale: 1, x: 0, y: 0, startX: 0, startY: 0, dragging: false };
+
+    let isGlassVisible = true;
+
+    function toggleGuidanceGlass() {
+      isGlassVisible = !isGlassVisible;
+      const glassOverlay = document.getElementById('guidanceGlassOverlay');
+      const toggleBtn = document.getElementById('glassToggleBtn');
+      if (glassOverlay) {
+        glassOverlay.style.opacity = isGlassVisible ? '1' : '0';
+        // Overlay stays non-interactive so dragging remains smooth in both modes.
+        glassOverlay.style.pointerEvents = 'none';
+      }
+      if (toggleBtn) {
+        toggleBtn.innerText = isGlassVisible ? '👁️ गाइडेंस ग्लास: ऑन' : '👁️ गाइडेंस ग्लास: ऑफ';
+        toggleBtn.style.background = isGlassVisible ? '#27272a' : '#059669';
+        toggleBtn.style.color = isGlassVisible ? '#F59E0B' : '#ffffff';
+      }
+    }
+
+
+    function openBannerCropPopup(file) {
+      pendingBannerFile = file;
+      const image = document.getElementById('bannerSourceImage');
+      const container = document.getElementById('bannerDragContainer');
+      const popup = document.getElementById('bannerCropPopupOverlay');
+      if (!image || !container || !popup) return;
+
+      if (bannerObjectUrl) URL.revokeObjectURL(bannerObjectUrl);
+      bannerObjectUrl = URL.createObjectURL(file);
+      image.onload = () => {
+        const frameWidth = container.clientWidth;
+        const frameHeight = 150;
+        const coverScale = Math.max(frameWidth / image.naturalWidth, frameHeight / image.naturalHeight);
+        bannerCropState = { scale: coverScale, baseScale: coverScale, x: 0, y: 0, startX: 0, startY: 0, dragging: false };
+        document.getElementById('bannerZoomRange').value = '1';
+        renderBannerCropImage();
+      };
+      image.src = bannerObjectUrl;
+      popup.style.display = 'flex';
+    }
+
+    function renderBannerCropImage() {
+      const image = document.getElementById('bannerSourceImage');
+      const container = document.getElementById('bannerDragContainer');
+      if (!image || !container || !image.naturalWidth) return;
+      const frameWidth = container.clientWidth;
+      const frameHeight = 150;
+      const scaledWidth = image.naturalWidth * bannerCropState.scale;
+      const scaledHeight = image.naturalHeight * bannerCropState.scale;
+      const maxX = Math.max(0, (scaledWidth - frameWidth) / 2);
+      const maxY = Math.max(0, (scaledHeight - frameHeight) / 2);
+      bannerCropState.x = Math.max(-maxX, Math.min(maxX, bannerCropState.x));
+      bannerCropState.y = Math.max(-maxY, Math.min(maxY, bannerCropState.y));
+      image.style.width = `${scaledWidth}px`;
+      image.style.height = `${scaledHeight}px`;
+      image.style.left = `calc(50% + ${bannerCropState.x}px)`;
+      image.style.top = `calc(50% + ${bannerCropState.y}px)`;
+      image.style.transform = 'translate(-50%, -50%)';
+    }
+
+    function adjustBannerZoom(value) {
+      const nextScale = bannerCropState.baseScale * Number(value || 1);
+      const ratio = nextScale / bannerCropState.scale;
+      bannerCropState.x *= ratio;
+      bannerCropState.y *= ratio;
+      bannerCropState.scale = nextScale;
+      renderBannerCropImage();
+    }
+
+    function closeBannerCropPopup() {
+      const popup = document.getElementById('bannerCropPopupOverlay');
+      if (popup) popup.style.display = 'none';
+      if (bannerObjectUrl) URL.revokeObjectURL(bannerObjectUrl);
+      bannerObjectUrl = '';
+      pendingBannerFile = null;
+    }
+
+    function beginBannerDrag(event) {
+      event.preventDefault();
+      const point = event.touches ? event.touches[0] : event;
+      bannerCropState.dragging = true;
+      bannerCropState.startX = point.clientX - bannerCropState.x;
+      bannerCropState.startY = point.clientY - bannerCropState.y;
+    }
+
+    function moveBannerDrag(event) {
+      if (!bannerCropState.dragging) return;
+      event.preventDefault();
+      const point = event.touches ? event.touches[0] : event;
+      bannerCropState.x = point.clientX - bannerCropState.startX;
+      bannerCropState.y = point.clientY - bannerCropState.startY;
+      renderBannerCropImage();
+    }
+
+    function endBannerDrag() { bannerCropState.dragging = false; }
+
+    async function saveCroppedBannerToSupabase() {
+      if (!pendingBannerFile || !currentMerchantData) return;
+      const image = document.getElementById('bannerSourceImage');
+      const container = document.getElementById('bannerDragContainer');
+      if (!image || !container || !image.naturalWidth) return;
+
+      const frameWidth = container.clientWidth;
+      const frameHeight = 150;
+      const canvas = document.createElement('canvas');
+      canvas.width = 1200;
+      canvas.height = Math.round(canvas.width * frameHeight / frameWidth);
+      const ctx = canvas.getContext('2d');
+      const scaleOut = canvas.width / frameWidth;
+      const drawWidth = image.naturalWidth * bannerCropState.scale * scaleOut;
+      const drawHeight = image.naturalHeight * bannerCropState.scale * scaleOut;
+      const drawX = (frameWidth / 2 + bannerCropState.x - drawWidth / (2 * scaleOut)) * scaleOut;
+      const drawY = (frameHeight / 2 + bannerCropState.y - drawHeight / (2 * scaleOut)) * scaleOut;
+      ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+      if (!blob) return showCustomAlert(currentLang === 'en' ? 'Error' : 'त्रुटि', currentLang === 'en' ? 'Could not crop this image.' : 'इमेज crop नहीं हो सकी।');
+      closeBannerCropPopup();
+      await uploadCroppedBannerBlob(blob);
+    }
+
+    async function uploadCroppedBannerBlob(blob) {
       const pbContainer = document.getElementById('bannerProgressBarContainer');
       const pbFill = document.getElementById('bannerProgressBarFill');
       const pbText = document.getElementById('bannerProgressText');
-      
-      pbContainer.style.display = 'block'; 
-      pbFill.style.width = '50%'; 
+      pbContainer.style.display = 'block';
+      pbFill.style.width = '50%';
       pbText.innerText = currentLang === 'en' ? 'Uploading banner...' : 'बैनर अपलोड हो रहा है...';
-
       const cleanId = String(currentMerchantData.id).replace(/[^a-zA-Z0-9]/g, '_');
-      const fileName = `banner_${cleanId}_${Date.now()}`;
-
+      const fileName = `banner_${cleanId}_${Date.now()}.jpg`;
       try {
-        const { error } = await supabaseClient.storage.from('merchants').upload(fileName, file, { cacheControl: '3600', upsert: true });
+        const { error } = await supabaseClient.storage.from('merchants').upload(fileName, blob, { cacheControl: '3600', upsert: true, contentType: 'image/jpeg' });
         if (error) throw error;
-
-        pbFill.style.width = '100%'; 
-        pbText.innerText = currentLang === 'en' ? 'Success!' : 'सफलता!';
-        
         const { data: publicUrlData } = supabaseClient.storage.from('merchants').getPublicUrl(fileName);
-        const bannerUrl = publicUrlData.publicUrl;
-        
+        const bannerUrl = sanitizeMediaUrl(publicUrlData.publicUrl);
         await executeSilentSecureUpdate('banner', { image_url: bannerUrl });
         currentMerchantData.image_url = bannerUrl;
         document.getElementById('merchantBannerDisplay').src = bannerUrl;
         document.getElementById('editMerchantBannerDisplay').src = bannerUrl;
-        
+        pbFill.style.width = '100%';
+        pbText.innerText = currentLang === 'en' ? 'Success!' : 'सफलता!';
         setTimeout(() => { pbContainer.style.display = 'none'; pbFill.style.width = '0%'; }, 1000);
       } catch (err) {
         pbContainer.style.display = 'none';
-        showCustomAlert(currentLang === 'en' ? "Error" : "त्रुटि", err.message);
+        showCustomAlert(currentLang === 'en' ? 'Error' : 'त्रुटि', err.message);
       }
-      event.target.value = "";
     }
+
+    // Pasted flow compatibility entry point: the existing crop implementation handles the actual work.
+    function handleBannerFileSelection(event) {
+      uploadAutoFitMerchantBanner(event);
+    }
+
+    function uploadAutoFitMerchantBanner(event) {
+      const file = event.target.files[0];
+      event.target.value = '';
+      if (!file || !currentMerchantData) return;
+      if (!file.type.startsWith('image/')) return showCustomAlert(currentLang === 'en' ? 'Error' : 'त्रुटि', currentLang === 'en' ? 'Please select an image.' : 'कृपया इमेज चुनें।');
+      openBannerCropPopup(file);
+    }
+
 
     function openEditSectionAccess() {
       if (!currentMerchantData) {
@@ -1375,6 +1549,41 @@
       }).join('');
     }
 
+    function buildMerchantQueryTableHTML(data) {
+      if (!data || data.length === 0) {
+        return `<div style="font-size:11px; color:#6B7280; text-align:center; padding:14px;">${currentLang === 'en' ? 'No queries sent yet.' : 'अभी तक कोई सवाल नहीं भेजा गया।'}</div>`;
+      }
+
+      const rows = data.map(q => {
+        const replyText = q.reply_text || q.staff_reply || '';
+        const isPending = !replyText && q.status !== 'Replied';
+        const statusText = isPending
+          ? (currentLang === 'en' ? 'Pending' : 'पेंडिंग')
+          : (currentLang === 'en' ? 'Replied' : 'जवाब मिला');
+        const replyDisplay = replyText || (currentLang === 'en' ? 'Awaiting admin reply' : 'एडमिन के जवाब की प्रतीक्षा है');
+        return `
+          <tr>
+            <td class="query-cell">${escapeHtml(q.query_text || '')}</td>
+            <td><span class="query-status-pill ${isPending ? 'query-status-pending' : 'query-status-replied'}">${isPending ? '⏳' : '✅'} ${statusText}</span></td>
+            <td class="reply-cell">${escapeHtml(replyDisplay)}</td>
+          </tr>`;
+      }).join('');
+
+      return `
+        <div class="merchant-query-table-wrap">
+          <table class="merchant-query-table">
+            <thead>
+              <tr>
+                <th>${currentLang === 'en' ? 'Your Query' : 'आपकी क्वेरी'}</th>
+                <th>${currentLang === 'en' ? 'Status' : 'स्थिति'}</th>
+                <th>${currentLang === 'en' ? 'Admin Reply' : 'एडमिन रिप्लाई'}</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+    }
+
     async function openQueryModal() {
       if (!currentMerchantData) return showCustomAlert(currentLang === 'en' ? "Login Required" : "लॉगिन आवश्यक", currentLang === 'en' ? "Please login for support." : "सपोर्ट के लिए लॉगिन करें।");
       
@@ -1394,28 +1603,44 @@
       `;
       showCustomAlert(title, msg, htmlContent);
 
-      const { data, error } = await supabaseClient
-        .from('merchant_queries')
-        .select('*')
-        .eq('merchant_name', currentMerchantData.store_name)
-        .order('id', { ascending: false });
+      try {
+        const { data, error } = await supabaseClient
+          .from('merchant_queries')
+          .select('*')
+          .eq('merchant_name', currentMerchantData.store_name)
+          .order('id', { ascending: false });
 
-      const listContainer = document.getElementById('queryHistoryList');
-      if (listContainer) {
-        if (error || !data || data.length === 0) {
-          listContainer.innerHTML = `<div style="font-size:11px; color:#6B7280; text-align:center;">${currentLang === 'en' ? 'No queries sent yet.' : 'अभी तक कोई सवाल नहीं भेजा गया।'}</div>`;
-        } else {
-          listContainer.innerHTML = buildQueryCardsHTML(data, false);
+        const listContainer = document.getElementById('queryHistoryList');
+        if (listContainer) {
+          if (error || !data || data.length === 0) {
+            listContainer.innerHTML = `<div style="font-size:11px; color:#6B7280; text-align:center;">${currentLang === 'en' ? 'No queries sent yet.' : 'अभी तक कोई सवाल नहीं भेजा गया।'}</div>`;
+          } else {
+            listContainer.innerHTML = buildMerchantQueryTableHTML(data);
+          }
         }
+      } catch (err) {
+        const listContainer = document.getElementById('queryHistoryList');
+        if (listContainer) listContainer.innerHTML = `<div style="font-size:11px; color:#DC2626; text-align:center;">टेबल स्ट्रक्चर या कॉलम की जाँच करें।</div>`;
       }
+
       await updateNotificationBadge();
-      markAllNotificationsAsSeen(); // 👁️ देखने के बाद लाल बैज तुरंत हट जाएगा!
+      markAllNotificationsAsSeen();
     }
 
     async function submitMerchantQuery() {
       const queryText = document.getElementById('merchantQueryInput').value.trim();
       if (!queryText || !currentMerchantData) return;
-      await supabaseClient.from('merchant_queries').insert([{ merchant_name: currentMerchantData.store_name, query_text: queryText, status: 'Pending' }]);
+      
+      const { error } = await supabaseClient.from('merchant_queries').insert([{ 
+        merchant_name: currentMerchantData.store_name, 
+        query_text: queryText, 
+        status: 'Pending' 
+      }]);
+
+      if (error) {
+        return showCustomAlert(currentLang === 'en' ? "Error" : "त्रुटि", error.message);
+      }
+
       closeCustomPopup();
       showCustomAlert(currentLang === 'en' ? "Success" : "सफलता", currentLang === 'en' ? "Query sent to Admin!" : "आपकी क्वेरी एडमिन को भेज दी गई है!");
     }
@@ -1495,6 +1720,15 @@
     }
     document.addEventListener('touchstart', unlockMobileAudioEngine, { once: true });
     document.addEventListener('click', unlockMobileAudioEngine, { once: true });
+    const bannerDragContainer = document.getElementById('bannerDragContainer');
+    if (bannerDragContainer) {
+      bannerDragContainer.addEventListener('pointerdown', beginBannerDrag);
+      bannerDragContainer.addEventListener('pointermove', moveBannerDrag);
+      bannerDragContainer.addEventListener('pointerup', endBannerDrag);
+      bannerDragContainer.addEventListener('pointercancel', endBannerDrag);
+      bannerDragContainer.addEventListener('pointerleave', endBannerDrag);
+    }
+
 
     // 🔊 असली घंटी की आवाज (Dual-Tone Metallic Chime + Vibration)
     function playNotificationBellSound() {
