@@ -168,6 +168,7 @@
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 
   <script>
     if ('serviceWorker' in navigator) {
@@ -287,7 +288,7 @@
       <div class="studio-upload-box" style="margin-top: 10px;">
         <div style="font-size:13px; font-weight:800; color:#111827; margin-bottom:8px;" data-i18n="post_upload_title">🖼️ नई फोटो पोस्ट अपलोड करें</div>
         <div class="input-group"><label data-i18n="post_cap_label">पोस्ट कैप्शन</label><input type="text" id="uploadPostCaptionInput" placeholder="जैसे: नई वैरायटी!" data-i18n-ph="post_cap_ph"></div>
-        <input type="file" id="postImageFileInput" accept="image/jpeg,image/png,image/webp,image/*" style="display: none;" onchange="handleMediaSelection(event, 'image')">
+        <input type="file" id="postImageFileInput" accept="image/jpeg,image/png,image/webp,image/*" style="display: none;" onchange="handleMerchantImageUpload(event)">
         <button type="button" class="btn-compact" onclick="document.getElementById('postImageFileInput').click()" style="background: #059669; color: #fff; width: 100%;"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 30 L 30 30 L 38 20 L 62 20 L 70 30 L 85 30 C 90 30, 90 85, 85 85 L 15 85 C 10 85, 10 30, 15 30 Z M 50 40 A 18 18 0 1 0 50 76 A 18 18 0 1 0 50 40 Z"/></svg> <span data-i18n="post_btn">फोटो गैलरी से चुनें और पोस्ट करें</span></button>
       </div>
       <div class="reel-progress-container" id="reelProgressBarContainer">
@@ -349,7 +350,7 @@
         <div class="profile-banner-box"><img id="editMerchantBannerDisplay" src="" alt="Store Banner"></div>
         <div class="progress-container" id="bannerProgressBarContainer"><div class="progress-bar-fill" id="bannerProgressBarFill"></div><div class="progress-text" id="bannerProgressText">0%</div></div>
         <div style="margin-bottom: 14px;">
-          <input type="file" id="bannerUploadInput" accept="image/*" style="display: none;" onchange="handleBannerFileSelection(event)">
+          <input type="file" id="bannerUploadInput" accept="image/*" style="display: none;" onchange="handleMerchantImageUpload(event)">
           <button type="button" class="btn-compact" onclick="document.getElementById('bannerUploadInput').click()" style="background: #2563EB; color: #fff; width: 100%;"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 30 L 30 30 L 38 20 L 62 20 L 70 30 L 85 30 C 90 30, 90 85, 85 85 L 15 85 C 10 85, 10 30, 15 30 Z M 50 40 A 18 18 0 1 0 50 76 A 18 18 0 1 0 50 40 Z"/></svg> <span data-i18n="banner_btn">बैनर बदलें</span></button>
         </div>
         <div class="input-group"><label data-i18n="store_name_label">दुकान का नाम</label><input type="text" id="editStoreName" disabled value=""></div>
@@ -965,6 +966,93 @@
       renderMediaGridFromList(localCached);
     }
 
+    // Common image upload pipeline: HEIC conversion, JPEG compression, then the correct destination flow.
+    async function handleMerchantImageUpload(event) {
+      const file = event.target.files[0];
+      const inputId = event.target.id;
+      event.target.value = '';
+      if (!file || !currentMerchantData) return;
+
+      const isBanner = inputId === 'bannerUploadInput';
+      const maxSize = isBanner ? 12 * 1024 * 1024 : 8 * 1024 * 1024;
+      if (file.size > maxSize) {
+        return showCustomAlert(currentLang === 'en' ? 'Error' : 'त्रुटि', isBanner
+          ? (currentLang === 'en' ? 'Banner must be under 12MB.' : 'बैनर 12MB से कम होना चाहिए।')
+          : (currentLang === 'en' ? 'Photo must be under 8MB.' : 'फोटो 8MB से कम होनी चाहिए।'));
+      }
+
+      try {
+        const finalFile = await (file.type === 'image/heic' || file.name.toLowerCase().endsWith('.heic')
+          ? convertHeicToJpeg(file)
+          : compressAndConvertToJpeg(file));
+
+        if (isBanner) {
+          openBannerCropPopup(finalFile);
+        } else {
+          await executeMediaUploadToSupabase(finalFile, 'image', event);
+        }
+      } catch (error) {
+        console.error('Image conversion failed:', error);
+        showCustomAlert(currentLang === 'en' ? 'Unsupported Image' : 'असमर्थित इमेज', currentLang === 'en'
+          ? 'This image format could not be processed. Please choose another photo.'
+          : 'यह इमेज प्रोसेस नहीं हो सकी। कृपया दूसरी फोटो चुनें।');
+      }
+    }
+
+    function convertHeicToJpeg(imageFile) {
+      return new Promise(async (resolve, reject) => {
+        try {
+          if (typeof window.heic2any === 'function') {
+            const converted = await window.heic2any({ blob: imageFile, toType: 'image/jpeg', quality: 0.8 });
+            const blob = Array.isArray(converted) ? converted[0] : converted;
+            resolve(new File([blob], imageFile.name.replace(/\.[^/.]+$/, '.jpg'), {
+              type: 'image/jpeg', lastModified: Date.now()
+            }));
+            return;
+          }
+          // Fallback for browsers that can decode the selected image natively.
+          convertImageBlobToJpeg(imageFile, resolve, reject);
+        } catch (error) { reject(error); }
+      });
+    }
+
+    function compressAndConvertToJpeg(imageFile) {
+      return new Promise((resolve, reject) => convertImageBlobToJpeg(imageFile, resolve, reject));
+    }
+
+    function convertImageBlobToJpeg(imageFile, resolve, reject) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const maxDimension = 2400;
+          const ratio = Math.min(1, maxDimension / Math.max(img.naturalWidth, img.naturalHeight));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(img.naturalWidth * ratio));
+          canvas.height = Math.max(1, Math.round(img.naturalHeight * ratio));
+          const ctx = canvas.getContext('2d', { alpha: false });
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(blob => {
+            if (!blob) return reject(new Error('Canvas JPEG conversion failed'));
+            resolve(new File([blob], imageFile.name.replace(/\.[^/.]+$/, '.jpg'), {
+              type: 'image/jpeg', lastModified: Date.now()
+            }));
+          }, 'image/jpeg', 0.8);
+        };
+        img.onerror = () => reject(new Error('Image could not be decoded'));
+        img.src = e.target.result;
+      };
+      reader.onerror = () => reject(new Error('Could not read image file'));
+      reader.readAsDataURL(imageFile);
+    }
+
+    // Backward-compatible name for any existing markup or integrations.
+    function handleBannerFileSelection(event) {
+      handleMerchantImageUpload(event);
+    }
+
     function handleMediaSelection(event, type) {
       const file = event.target.files[0];
       if (!file || !currentMerchantData) return;
@@ -1005,6 +1093,14 @@
       return encodeURI(formattedUrl);
     }
 
+    function getNextMerchantImageSequence(merchantId) {
+      const key = `star_image_sequence_${String(merchantId)}`;
+      const current = parseInt(localStorage.getItem(key) || '0', 10);
+      const next = Number.isFinite(current) ? current + 1 : 1;
+      localStorage.setItem(key, String(next));
+      return next;
+    }
+
     async function executeMediaUploadToSupabase(file, type, event) {
       const caption = type === 'video'
         ? (document.getElementById('uploadReelCaptionInput').value.trim() || (currentLang === 'en' ? "Special Offer" : "विशेष ऑफर"))
@@ -1019,7 +1115,10 @@
 
       const ext = (file.name && file.name.includes('.')) ? file.name.split('.').pop() : (type === 'video' ? 'mp4' : 'jpg');
       const cleanId = String(currentMerchantData.id).replace(/[^a-zA-Z0-9]/g, '_');
-      const fileName = `${type}_${cleanId}_${Date.now()}.${ext}`;
+      const imageSequence = type === 'image' ? getNextMerchantImageSequence(currentMerchantData.id) : null;
+      const fileName = type === 'image'
+        ? `merchant_photo_${cleanId}_${imageSequence}_${Date.now()}.jpg`
+        : `${type}_${cleanId}_${Date.now()}.${ext}`;
 
       const preferredBucket = type === 'video' ? 'reels' : 'posts';
       let finalPublicUrl = '';
@@ -1362,11 +1461,7 @@
     }
 
     function uploadAutoFitMerchantBanner(event) {
-      const file = event.target.files[0];
-      event.target.value = '';
-      if (!file || !currentMerchantData) return;
-      if (!file.type.startsWith('image/')) return showCustomAlert(currentLang === 'en' ? 'Error' : 'त्रुटि', currentLang === 'en' ? 'Please select an image.' : 'कृपया इमेज चुनें।');
-      openBannerCropPopup(file);
+      handleMerchantImageUpload(event);
     }
 
 
