@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <title>एसेट लिंक्स टेस्टर</title>
+    <style>
+        body { font-family: monospace; background: #0f172a; color: #fff; padding: 20px; }
+        .box { background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #334155; }
+        .success { color: #4ade80; font-weight: bold; }
+        .error { color: #f87171; font-weight: bold; }
+        button { background: #f59e0b; color: #000; border: none; padding: 10px 15px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>🔍 TWA assetlinks.json हिंदी टेस्टर</h2>
+    <div class="box">
+        <p>बटन दबाकर जांच करें कि आपकी `.well-known/assetlinks.json` फाइल सर्वर से सही तरीके से लोड हो रही है या नहीं:</p>
+        <button onclick="checkAssetLinks()">जांच शुरू करें</button>
+    </div>
+    <div class="box" id="resultBox" style="white-space: pre-wrap;">परिणाम यहाँ दिखाई देगा...</div>
+
+    <script>
+        async function checkAssetLinks() {
+            const resultBox = document.getElementById('resultBox');
+            resultBox.innerHTML = "जांच की जा रही है...";
+            
+            const targetUrl = window.location.origin + '/.well-known/assetlinks.json';
+            
+            try {
+                const response = await fetch(targetUrl);
+                const contentType = response.headers.get("content-type");
+                
+                let output = `📁 टारगेट पाथ: ${targetUrl}\n`;
+                output += `📡 HTTP स्टेटस: ${response.status} ${response.statusText}\n`;
+                output += `📋 कंटेंट-टाइप (Content-Type): ${contentType}\n\n`;
+
+                if (response.ok) {
+                    const jsonText = await response.text();
+                    output += `<span class="success">✅ फाइल सफलतापूर्वक मिल गई! फाइल का डेटा:</span>\n${jsonText}`;
+                    
+                    if (contentType && !contentType.includes("application/json")) {
+                        output += `\n\n<span class="error">⚠️ चेतावनी: सर्वर 'application/json' की बजाय '${contentType}' भेज रहा है। एंड्रॉइड TWA इसे रिजेक्ट कर सकता है!</span>`;
+                    } else {
+                        output += `\n\n<span class="success">✨ कंटेंट-टाइप बिल्कुल सही (application/json) है!</span>`;
+                    }
+                } else {
+                    output += `<span class="error">❌ एरर: सर्वर ने फाइल लोड करने से मना कर दिया (Status: ${response.status})। कृपया सुनिश्चित करें कि `.well-known` फोल्डर सही जगह पर अपलोड है।</span>`;
+                }
+                
+                resultBox.innerHTML = output;
+            } catch (err) {
+                resultBox.innerHTML = `<span class="error">❌ फेच एरर (Fetch Error): ${err.message}\n(CORS या गलत पाथ की समस्या हो सकती है)।</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
