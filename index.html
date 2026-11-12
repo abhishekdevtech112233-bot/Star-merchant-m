@@ -7,6 +7,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#F8F9FA" id="appThemeColor">
+  <script>try { if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('system-dark'); } catch (e) {}</script>
   <title>Star Merchant - Secure Dashboard</title>
 
   <!-- 🛡️ STEP 0: HARDWARE LOCK & ANTI-DEBUGGER FORTRESS 🛡️ -->
@@ -59,9 +61,17 @@
     .noti-title { font-size: 15px; font-weight: 900; display: flex; align-items: center; gap: 6px; }
     .noti-close-btn { background: none; border: none; color: #F59E0B; font-size: 28px; font-weight: 300; cursor: pointer; line-height: 1; }
     .noti-content { padding: 16px; overflow-y: auto; flex: 1; background: #F8F9FA; }
+    .notif-item { display:flex; align-items:flex-start; gap:12px; background:#FFFFFF; border:1px solid #E5E7EB; border-radius:10px; padding:12px; margin-bottom:8px; box-shadow:0 1px 2px rgba(0,0,0,0.02); text-align:left; position:relative; }
+    .notif-dot { width:8px; height:8px; background:#2563EB; border-radius:50%; margin-top:6px; flex-shrink:0; }
+    .notif-body { flex:1; min-width:0; }
+    .notif-title { font-size:13px; font-weight:700; color:#111827; margin-bottom:2px; }
+    .notif-text { font-size:12px; color:#4B5563; margin-bottom:4px; line-height:1.4; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .notif-time { font-size:10px; color:#9CA3AF; }
+    .notif-dismiss { position:absolute; top:6px; right:8px; background:none; border:none; color:#9CA3AF; font-size:14px; font-weight:900; cursor:pointer; }
     .tab-screen { display: none; padding: 14px; width: 100%; }
     .tab-screen.active { display: block; }
-    .status-card, .action-card, .studio-upload-box, .profile-card, .notes-bar-container, .calc-container { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 14px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+    .status-card, .action-card, .studio-upload-box, .profile-card, .notes-bar-container, .calc-container, .notification-card, .support-card { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+    .notification-header-card { display:flex; align-items:center; gap:10px; margin-bottom:14px; background:#121212; padding:14px; border-radius:12px; border:1px solid #262626; color:#FFFFFF; }
     .status-card { display: flex; justify-content: space-between; align-items: center; }
     .status-info-title { font-size: 13px; font-weight: 800; color: #111827; }
     .status-info-sub { font-size: 10px; color: #6B7280; margin-top: 2px; }
@@ -75,6 +85,11 @@
     .metric-title { font-size: 12px; font-weight: 700; color: #9CA3AF; }
     .metric-value { font-size: 26px; font-weight: 900; color: #F59E0B; margin: 4px 0; }
     .metric-sub { font-size: 11px; color: #D1D5DB; }
+    .stats-card-split { background: #111827; border-radius: 14px; padding: 16px; color: #fff; display: flex; align-items: center; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .stat-col { flex: 1; text-align: center; }
+    .stat-value { font-size: 24px; font-weight: 800; color: #FBBF24; margin-bottom: 2px; }
+    .stat-divider { width: 1px; background: rgba(255,255,255,0.15); height: 50px; margin: 0 12px; }
+    .stat-label { font-size: 20px; font-weight: 800; color: #D1D5DB; }
     .action-card-title { font-size: 14px; font-weight: 800; color: #111827; margin-bottom: 10px; }
     .input-group { margin-bottom: 10px; text-align: left; }
     .input-group label { display: block; font-size: 11px; font-weight: 700; color: #4B5563; margin-bottom: 3px; }
@@ -89,6 +104,16 @@
     .calc-btn.ac { background: #FEE2E2; color: #DC2626; border-color: #FECACA; }
     .calc-btn.c-btn { background: #FFEDD5; color: #C2410C; border-color: #FED7AA; }
     .calc-btn.del { background: #F3F4F6; color: #4B5563; }
+    .profile-calc-container { padding:8px; margin:8px 0 0; background:#111827; border-color:#111827; }
+    .profile-calc-container .calc-screen { font-size:24px; padding:6px 10px; margin-bottom:6px; background:#1F2937; color:#FBBF24; border-radius:8px; }
+    .profile-calc-container .calc-grid { gap:4px; }
+    .profile-calc-container .calc-btn { min-height:34px; padding:4px 0; font-size:14px; border-radius:7px; background:#F3F4F6; color:#1F2937; border-color:#E5E7EB; }
+    .profile-calc-container .calc-btn:active { background:#E5E7EB; }
+    .profile-calc-container .calc-btn.op { background:#FEF3C7; color:#B45309; border-color:#FDE68A; }
+    .profile-calc-container .calc-btn.eq { background:#059669; color:#FFFFFF; border-color:#047857; }
+    .profile-calc-container .calc-btn.ac { background:#FEE2E2; color:#DC2626; border-color:#FECACA; }
+    .profile-calc-container .calc-btn.c-btn { background:#FFEDD5; color:#C2410C; border-color:#FED7AA; }
+    .profile-calc-container .calc-btn.del { background:#E5E7EB; color:#374151; border-color:#D1D5DB; }
     .notes-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .notes-section-title { font-size: 14px; font-weight: 900; color: #111827; display: flex; align-items: center; gap: 6px; }
     .add-note-btn { background: #2563EB; color: #FFF; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(37,99,235,0.3); }
@@ -134,7 +159,7 @@
     .profile-top-action-btn { position: absolute; top: 12px; right: 12px; background: #111827; color: #F59E0B; border: none; padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.25); }
     .profile-banner-box { width: 100%; height: 100px; border-radius: 10px; overflow: hidden; margin-bottom: 10px; background: #111827; border: 1px solid #E5E7EB; position: relative; }
     .profile-banner-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .name-title-text { font-size: 16px; font-weight: 800; color: #111827; margin-top: 6px; line-height: 1.3; text-align: center; overflow-wrap: anywhere; word-break: break-word; padding: 0 8px; }
+    .name-title-text { font-size: 16px; font-weight: 800; color: #F59E0B; margin-top: 6px; line-height: 1.3; text-align: center; overflow-wrap: anywhere; word-break: break-word; padding: 0 8px; }
     
     /* 3D METALLIC BOTTOM NAV BAR */
     .bottom-nav { position: fixed !important; bottom: 0 !important; left: 50% !important; transform: translateX(-50%) !important; width: 100% !important; max-width: 480px !important; height: 62px !important; background: #FFFFFF !important; border-top: 1px solid #E5E7EB !important; display: flex !important; justify-content: space-around !important; align-items: center !important; z-index: 9999 !important; box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.06); }
@@ -167,6 +192,86 @@
       -webkit-user-select: none;
       user-select: none;
     }
+  
+    /* Follow the phone's system theme across the complete app. */
+    html.system-dark { color-scheme:dark; }
+    html:not(.system-dark) { color-scheme:light; }
+    html:not(.system-dark) .login-gate-overlay { background:#F3F4F6 !important; color:#111827 !important; }
+    html:not(.system-dark) .login-gate-card { background:#FFFFFF !important; border-color:#E5E7EB !important; box-shadow:0 12px 32px rgba(0,0,0,0.12) !important; }
+    html:not(.system-dark) .login-gate-card .gate-input { background:#F9FAFB !important; color:#111827 !important; border-color:#D1D5DB !important; }
+    html:not(.system-dark) .login-gate-card [style*="color:#fff"],
+    html:not(.system-dark) .login-gate-card [style*="color: #fff"],
+    html:not(.system-dark) .login-gate-card [style*="color:#FFFFFF"] { color:#111827 !important; }
+    html:not(.system-dark) #videoEditorOverlay { background:#F8F9FA !important; color:#111827 !important; }
+    html:not(.system-dark) #videoEditorOverlay > div:first-child { background:#FFFFFF !important; border-color:#E5E7EB !important; }
+    html:not(.system-dark) #videoEditorOverlay > div:last-child { background:#FFFFFF !important; border-color:#E5E7EB !important; }
+    html:not(.system-dark) #videoEditorOverlay button[style*="color: #FFF"] { color:#111827 !important; }
+    html:not(.system-dark) #editorCaptionInput { background:#FFFFFF !important; color:#111827 !important; border-color:#D1D5DB !important; }
+    html.system-dark body,
+    html.system-dark .device-shell,
+    html.system-dark .tab-screen { background-color:#000000 !important; color:#F9FAFB !important; }
+    html.system-dark .top-header,
+    html.system-dark .bottom-nav,
+    html.system-dark .status-card,
+    html.system-dark .action-card,
+    html.system-dark .studio-upload-box,
+    html.system-dark .profile-card,
+    html.system-dark .noti-sidebar,
+    html.system-dark .noti-content,
+    html.system-dark .notif-item,
+    html.system-dark .support-form-container,
+    html.system-dark .notification-card,
+    html.system-dark .support-card,
+    html.system-dark .reel-action-card,
+    html.system-dark .merchant-full-view-card,
+    html.system-dark .custom-popup-card,
+    html.system-dark .merchant-query-table-wrap,
+    html.system-dark .login-lock-layer,
+    html.system-dark .calc-container,
+    html.system-dark .studio-header-card { background-color:#121212 !important; border-color:#262626 !important; color:#F9FAFB !important; }
+    html.system-dark [style*="background:#FFFFFF"],
+    html.system-dark [style*="background: #FFFFFF"],
+    html.system-dark [style*="background:#F8F9FA"],
+    html.system-dark [style*="background: #F8F9FA"],
+    html.system-dark [style*="background:#F9FAFB"],
+    html.system-dark [style*="background: #F9FAFB"],
+    html.system-dark [style*="background:#F3F4F6"],
+    html.system-dark [style*="background: #F3F4F6"],
+    html.system-dark [style*="background:#E5E7EB"],
+    html.system-dark [style*="background: #E5E7EB"] { background-color:#1F2937 !important; border-color:#374151 !important; }
+    html.system-dark .brand-title,
+    html.system-dark .name-title-text,
+    html.system-dark .action-card-title,
+    html.system-dark .status-info-title,
+    html.system-dark .stat-label,
+    html.system-dark .notes-section-title,
+    html.system-dark .input-group label,
+    html.system-dark .notif-title,
+    html.system-dark .notif-text,
+    html.system-dark .action-sheet-title,
+    html.system-dark .nav-item,
+    html.system-dark .query-cell,
+    html.system-dark .merchant-query-table td { color:#F3F4F6 !important; }
+    html.system-dark [style*="color:#111827"], html.system-dark [style*="color: #111827"],
+    html.system-dark [style*="color:#1F2937"], html.system-dark [style*="color: #1F2937"],
+    html.system-dark [style*="color:#374151"], html.system-dark [style*="color: #374151"],
+    html.system-dark [style*="color:#4B5563"], html.system-dark [style*="color: #4B5563"] { color:#F3F4F6 !important; }
+    html.system-dark input:not([type="checkbox"]):not([type="file"]),
+    html.system-dark textarea,
+    html.system-dark select,
+    html.system-dark .input-group input,
+    html.system-dark .input-group textarea { background-color:#1A1A1A !important; color:#FFFFFF !important; border-color:#374151 !important; }
+    html.system-dark input::placeholder, html.system-dark textarea::placeholder { color:#9CA3AF !important; }
+    html.system-dark .nav-item.active { color:#FFFFFF !important; }
+    html.system-dark .bottom-nav svg [fill="#111827"] { fill:#F9FAFB !important; }
+    html.system-dark .bottom-nav svg [stroke="#111827"] { stroke:#F9FAFB !important; }
+    html.system-dark .nav-item[onclick*="notifications"] svg[stroke="#111827"] { stroke:#F9FAFB !important; }
+    html.system-dark .notif-sub-tab.active { background:#2563EB !important; color:#FFFFFF !important; }
+    html.system-dark .notif-sub-tab:not(.active) { background:#1F2937 !important; color:#D1D5DB !important; }
+    html.system-dark .merchant-query-table { background:#121212 !important; }
+    html.system-dark .merchant-query-table td { border-color:#262626 !important; }
+    html.system-dark .profile-banner-box { border-color:#374151 !important; }
+    html.system-dark .name-title-text { color:#F59E0B !important; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
@@ -216,12 +321,7 @@
     <header class="top-header" id="merchantHeader">
       <div class="brand-title"><span class="star-badge">★</span> STAR MERCHANT</div>
       <div class="header-right-box">
-        <button class="lang-switch-btn" onclick="toggleLanguage()" id="langSwitchBtn">🌐 EN</button>
-        <div class="header-msg-btn" onclick="openQueryModal()" title="Support"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 15 C 10 15, 10 50, 15 65 L 35 65 L 50 85 L 65 65 L 85 65 C 90 65, 90 15, 85 15 Z"/></svg></div>
-        <div class="header-msg-btn" onclick="toggleNotifications()" title="Notifications" style="position:relative;">
-          <svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 50 10 C 35 10, 30 25, 30 40 L 25 65 L 75 65 L 70 40 C 70 25, 65 10, 50 10 Z M 40 75 A 10 10 0 0 0 60 75 Z"/></svg>
-          <span id="notiBadgeCount" class="noti-badge">0</span>
-        </div>
+        <button class="lang-switch-btn" onclick="toggleLanguage()" id="langSwitchBtn">🌐 HI</button>
       </div>
     </header>
 
@@ -250,10 +350,14 @@
           <span class="slider"></span>
         </label>
       </div>
-      <div class="metric-card">
-        <div class="metric-title" data-i18n="metric_title">👥 आज कुल विज़िट्स ग्राहकों की</div>
-        <div class="metric-value" id="metricVisitsVal">0 Customers</div>
-        <div class="metric-sub" data-i18n="metric_sub">कस्टमर ऐप से लाइव सिंक हो रहा है!</div>
+      <div class="stats-card-split">
+        <div class="stat-col">
+          <div class="stat-value" id="metricClaimsVal">0</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-col">
+          <div class="stat-label">Claim</div>
+        </div>
       </div>
       <div class="action-card">
         <div class="action-card-title" data-i18n="offer_card_title">🏷️ स्पेशल डिस्काउंट ऑफर सेट करें</div>
@@ -271,33 +375,40 @@
       </div>
     </main>
 
-    <!-- 2. Studio Tab -->
+    <!-- 2. Studio Tab (बिना सब-लाइन और बिना कैप्शन बॉक्स के) -->
     <main id="tab-manage-reels" class="tab-screen">
       <div class="studio-header-card">
         <div>
-          <div style="font-size:16px; font-weight:900;" data-i18n="studio_title">🎬 मर्चेंट मीडिया स्टूडियो</div>
-          <div style="font-size:11px; color:#9CA3AF; margin-top:2px;" id="studioSubTitle" data-i18n="studio_sub">लॉगिन करने के बाद यहाँ आपकी रील्स और पोस्ट्स दिखाई देंगी।</div>
+          <div style="font-size:16px; font-weight:900;" data-i18n="studio_title">मर्चेंट मीडिया स्टूडियो</div>
+          <div id="studioSubTitle" style="font-size:11px; color:#6B7280; margin-top:2px; font-weight:600;" data-i18n="studio_sub">एंगेजमेंट बढ़ाने के लिए और वीडियो पोस्ट करें।</div>
         </div>
       </div>
+
       <div class="studio-upload-box">
         <div style="font-size:13px; font-weight:800; color:#111827; margin-bottom:8px;" data-i18n="reel_upload_title">📹 नई रील (वीडियो) अपलोड करें</div>
-        <div class="input-group"><label data-i18n="reel_cap_label">रील कैप्शन</label><input type="text" id="uploadReelCaptionInput" placeholder="जैसे: बेस्ट ऑफर!" data-i18n-ph="reel_cap_ph"></div>
-        <input type="file" id="reelVideoFileInput" accept="video/mp4,video/webm,video/*" style="display: none;" onchange="handleMediaSelection(event, 'video')">
-        <button type="button" class="btn-compact" onclick="document.getElementById('reelVideoFileInput').click()" style="background: #2563EB; color: #fff; width: 100%;"> <span data-i18n="reel_btn">गैलरी से वीडियो चुनें (Max 30s)</span></button>
+        <input type="file" id="reelVideoFileInput" accept="video/mp4,video/webm,video/*" style="display:none;" onchange="handleMediaSelection(event, 'video')">
+        <button type="button" class="btn-compact" onclick="document.getElementById('reelVideoFileInput').click()" style="background:#2563EB; color:#fff; width:100%;">
+          <span data-i18n="reel_btn">गैलरी से वीडियो चुनें (Max 30s)</span>
+        </button>
       </div>
-      <div class="studio-upload-box" style="margin-top: 10px;">
+
+      <div class="studio-upload-box" style="margin-top:10px;">
         <div style="font-size:13px; font-weight:800; color:#111827; margin-bottom:8px;" data-i18n="post_upload_title">🖼️ नई फोटो पोस्ट अपलोड करें</div>
-        <div class="input-group"><label data-i18n="post_cap_label">पोस्ट कैप्शन</label><input type="text" id="uploadPostCaptionInput" placeholder="जैसे: नई वैरायटी!" data-i18n-ph="post_cap_ph"></div>
-        <input type="file" id="postImageFileInput" accept="image/jpeg,image/png,image/webp,image/*" style="display: none;" onchange="handleMerchantImageUpload(event)">
-        <button type="button" class="btn-compact" onclick="document.getElementById('postImageFileInput').click()" style="background: #059669; color: #fff; width: 100%;"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 30 L 30 30 L 38 20 L 62 20 L 70 30 L 85 30 C 90 30, 90 85, 85 85 L 15 85 C 10 85, 10 30, 15 30 Z M 50 40 A 18 18 0 1 0 50 76 A 18 18 0 1 0 50 40 Z"/></svg> <span data-i18n="post_btn">फोटो गैलरी से चुनें और पोस्ट करें</span></button>
+        <input type="file" id="postImageFileInput" accept="image/jpeg,image/png,image/webp,image/*" style="display:none;" onchange="handleMerchantImageUpload(event)">
+        <button type="button" class="btn-compact" onclick="document.getElementById('postImageFileInput').click()" style="background:#059669; color:#fff; width:100%;">
+          <svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 30 L 30 30 L 38 20 L 62 20 L 70 30 L 85 30 C 90 30, 90 85, 85 85 L 15 85 C 10 85, 10 30, 15 30 Z M 50 40 A 18 18 0 1 0 50 76 A 18 18 0 1 0 50 40 Z"/></svg>
+          <span data-i18n="post_btn">फोटो गैलरी से चुनें और पोस्ट करें</span>
+        </button>
       </div>
+
       <div class="reel-progress-container" id="reelProgressBarContainer">
         <div class="reel-progress-fill" id="reelProgressBarFill"></div>
         <div class="reel-progress-text" id="reelProgressText">0%</div>
       </div>
+
       <div style="font-size:13px; font-weight:800; color:#111827; margin-top:14px; margin-bottom:6px;" data-i18n="grid_title">🎦 रील्स और पोस्ट्स ग्रिड (टैप या लॉन्ग-प्रेस करें)</div>
       <div class="reels-grid-container" id="merchantReelsGridContainer">
-        <div style="grid-column: span 3; font-size:12px; color:#6B7280; text-align:center; padding:20px;" data-i18n="login_req_studio">कृपया पहले प्रोफाइल टैब से लॉगिन करें।</div>
+        <div style="grid-column:span 3; font-size:12px; color:#6B7280; text-align:center; padding:20px;" data-i18n="login_req_studio">कृपया पहले प्रोफाइल टैब से लॉगिन करें।</div>
       </div>
     </main>
 
@@ -308,29 +419,6 @@
       <div id="dynamicB2BNetworkContainer"><div style="font-size:12px; color:#6B7280; text-align:center; padding:20px;" data-i18n="loading">लोड हो रहा है...</div></div>
     </main>
 
-    <!-- 4. Calculator Tab -->
-    <main id="tab-calculator" class="tab-screen">
-      <div class="notes-bar-container">
-        <div class="notes-section-header">
-          <div class="notes-section-title" data-i18n="notes_title">📝 मर्चेंट नोट्स & हिसाब किताब</div>
-          <button class="add-note-btn" onclick="openAddNotePrompt()">+</button>
-        </div>
-        <div id="merchantNotesListContainer"></div>
-      </div>
-      <div class="calc-container">
-        <div class="calc-screen" id="calcDisplay">0</div>
-        <div class="calc-grid">
-          <button class="calc-btn ac" onclick="calcClear()">AC</button>
-          <button class="calc-btn c-btn" onclick="calcClearSingleEntry()">C</button>
-          <button class="calc-btn del" onclick="calcBackSpace()">⌫</button>
-          <button class="calc-btn op" onclick="calcAppend('/')">÷</button>
-          <button class="calc-btn" onclick="calcAppend('7')">7</button><button class="calc-btn" onclick="calcAppend('8')">8</button><button class="calc-btn" onclick="calcAppend('9')">9</button><button class="calc-btn op" onclick="calcAppend('*')">×</button>
-          <button class="calc-btn" onclick="calcAppend('4')">4</button><button class="calc-btn" onclick="calcAppend('5')">5</button><button class="calc-btn" onclick="calcAppend('6')">6</button><button class="calc-btn op" onclick="calcAppend('-')">-</button>
-          <button class="calc-btn" onclick="calcAppend('1')">1</button><button class="calc-btn" onclick="calcAppend('2')">2</button><button class="calc-btn" onclick="calcAppend('3')">3</button><button class="calc-btn op" onclick="calcAppend('+')">+</button>
-          <button class="calc-btn" onclick="calcAppend('0')">0</button><button class="calc-btn" onclick="calcAppend('.')">.</button><button class="calc-btn" onclick="calcClearZero()">00</button><button class="calc-btn eq" onclick="calcEvaluate()">=</button>
-        </div>
-      </div>
-    </main>
 
     <!-- 5. Profile Tab -->
     <main id="tab-profile" class="tab-screen">
@@ -339,28 +427,101 @@
         <div class="profile-banner-box"><img id="merchantBannerDisplay" src="" alt="Store Banner"></div>
         <div class="name-title-text" id="merchantStoreNameDisplay">Store Name (Guest)</div>
         <div style="font-size:11px; color:#6B7280; margin-top:2px; line-height:1.35; text-align:center; overflow-wrap:anywhere; word-break:break-word; padding:0 10px;" id="merchantSubLocDisplay">Delhi</div>
-        <div style="margin-top: 12px; text-align: left;"><button type="button" id="profileEditAccessBtn" class="btn-compact" onclick="openEditSectionAccess()" style="background:#F3F4F6; color:#4B5563; border:1px solid #D1D5DB; width:100%;" title="Edit Information"> Edit Information</button></div>
+        <div style="margin-top: 8px; text-align: left;"><button type="button" id="profileEditAccessBtn" class="btn-compact" onclick="openEditSectionAccess()" style="background:#F3F4F6; color:#4B5563; border:1px solid #D1D5DB; width:100%;" title="Edit Information"> Edit Information</button></div>
+        <!-- Compact calculator layout from the provided snippet -->
+        <div style="background:#FFFFFF; border:1px solid #E5E7EB; border-radius:14px; padding:14px; margin-top:12px; box-shadow:0 4px 12px rgba(0,0,0,0.04); max-width:100%;">
+          <div style="font-size:13px; font-weight:800; color:#111827; margin-bottom:8px; text-align:left; display:flex; align-items:center; gap:6px;">🧮 <span>त्वरित कैलकुलेटर</span></div>
+          <div id="calcDisplay" style="background:#111827; color:#FBBF24; font-size:28px; font-weight:900; padding:12px 16px; border-radius:10px; text-align:right; margin-bottom:10px; border:1px solid #374151; overflow-x:auto; letter-spacing:1px;">0</div>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px;">
+            <button onclick="calcClear()" style="background:#FEE2E2; color:#DC2626; border:1px solid #FECACA; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">AC</button>
+            <button onclick="calcClearSingleEntry()" style="background:#FFEDD5; color:#C2410C; border:1px solid #FED7AA; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">C</button>
+            <button onclick="calcBackSpace()" style="background:#F3F4F6; color:#4B5563; border:1px solid #E5E7EB; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">⌫</button>
+            <button onclick="calcAppend('/')" style="background:#FEF3C7; color:#B45309; border:1px solid #FDE68A; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">÷</button>
+            <button onclick="calcAppend('7')" style="background:#F9FAFB; color:#1F2937; border:1px solid #E5E7EB; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">7</button>
+            <button onclick="calcAppend('8')" style="background:#F9FAFB; color:#1F2937; border:1px solid #E5E7EB; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">8</button>
+            <button onclick="calcAppend('9')" style="background:#F9FAFB; color:#1F2937; border:1px solid #E5E7EB; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">9</button>
+            <button onclick="calcAppend('*')" style="background:#FEF3C7; color:#B45309; border:1px solid #FDE68A; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">×</button>
+            <button onclick="calcAppend('4')" style="background:#F9FAFB; color:#1F2937; border:1px solid #E5E7EB; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">4</button>
+            <button onclick="calcAppend('5')" style="background:#F9FAFB; color:#1F2937; border:1px solid #E5E7EB; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">5</button>
+            <button onclick="calcAppend('6')" style="background:#F9FAFB; color:#1F2937; border:1px solid #E5E7EB; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">6</button>
+            <button onclick="calcAppend('-')" style="background:#FEF3C7; color:#B45309; border:1px solid #FDE68A; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">-</button>
+            <button onclick="calcAppend('1')" style="background:#F9FAFB; color:#1F2937; border:1px solid #E5E7EB; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">1</button>
+            <button onclick="calcAppend('2')" style="background:#F9FAFB; color:#1F2937; border:1px solid #E5E7EB; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">2</button>
+            <button onclick="calcAppend('3')" style="background:#F9FAFB; color:#1F2937; border:1px solid #E5E7EB; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">3</button>
+            <button onclick="calcAppend('+')" style="background:#FEF3C7; color:#B45309; border:1px solid #FDE68A; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">+</button>
+            <button onclick="calcAppend('0')" style="background:#F9FAFB; color:#1F2937; border:1px solid #E5E7EB; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">0</button>
+            <button onclick="calcAppend('.')" style="background:#F9FAFB; color:#1F2937; border:1px solid #E5E7EB; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">.</button>
+            <button onclick="calcClearZero()" style="background:#F3F4F6; color:#1F2937; border:1px solid #E5E7EB; padding:14px 0; font-size:16px; font-weight:800; border-radius:10px; cursor:pointer;">00</button>
+            <button onclick="calcEvaluate()" style="background:#059669; color:#FFFFFF; border:1px solid #047857; padding:14px 0; font-size:18px; font-weight:900; border-radius:10px; cursor:pointer;">=</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Notifications & Support Tab -->
+    <main id="tab-notifications" class="tab-screen" style="background:#F8F9FA; min-height:calc(100dvh - 62px); color:#111827;">
+      <div class="notification-header-card">
+        <span style="font-size:22px;">🔔</span>
+        <div>
+          <div style="font-size:16px; font-weight:900; color:#FFFFFF;" data-i18n="notif_title">Notifications &amp; Support</div>
+          <div style="font-size:11px; color:#9CA3AF;" data-i18n="notif_sub">Stay updated with queries and analytics</div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-bottom:14px;">
+        <button type="button" class="btn-compact notif-sub-tab active" onclick="switchNotifSubTab('support', this)" style="flex:1; background:#2563EB; color:#fff; font-weight:800; border-radius:10px; padding:10px; position:relative;">
+          <span data-i18n="support_tab_btn">Support Queries</span><span class="tab-badge-dot" id="supportDot" style="position:absolute; top:6px; right:10px; width:7px; height:7px; background:#DC2626; border-radius:50%; display:none;"></span>
+        </button>
+        <button type="button" class="btn-compact notif-sub-tab" onclick="switchNotifSubTab('likes', this)" style="flex:1; background:#1F2937; color:#9CA3AF; font-weight:800; border-radius:10px; padding:10px;" data-i18n="likes_tab_btn">Likes &amp; Views</button>
+      </div>
+
+      <div id="notifSubContainer">
+        <div id="supportSubContent">
+          <div class="notification-card">
+            <div style="font-size:14px; font-weight:900; color:#111827; margin-bottom:8px;" data-i18n="get_help_title">Get help from Admin</div>
+            <textarea id="supportQueryInput" rows="3" placeholder="Write your issue or query here..." data-i18n-ph="notif_query_placeholder" style="width:100%; background:#F9FAFB; border:1px solid #D1D5DB; border-radius:8px; padding:10px; color:#111827; font-size:13px; outline:none; resize:none; margin-bottom:10px;"></textarea>
+            <button type="button" class="btn-compact" onclick="submitSupportQuery()" style="background:#059669; color:#fff; width:100%; font-weight:900; padding:12px; border-radius:8px;" data-i18n="send_support_btn">Send to Support</button>
+          </div>
+          <div class="notification-card">
+            <div style="font-size:13px; font-weight:800; color:#4B5563; margin-bottom:8px;" data-i18n="admin_replies_title">Your questions and Admin replies:</div>
+            <div id="supportQueriesContainer" style="font-size:12px; color:#6B7280; text-align:center; padding:16px;" data-i18n="no_queries_text">No queries sent yet.</div>
+          </div>
+        </div>
+        <div id="likesSubContent" style="display:none;">
+          <div id="likesViewsListContainer" class="notification-card">
+            <div class="insta-notif-row" style="display:flex; align-items:flex-start; gap:12px; padding:12px 0; border-bottom:1px solid #E5E7EB; font-size:13px; color:#4B5563; line-height:1.4;">
+              <div class="insta-avatar" style="width:40px; height:40px; border-radius:50%; background:#FEF3C7; flex-shrink:0; display:flex; align-items:center; justify-content:center;">📊</div>
+              <div class="insta-content" style="flex:1;">
+                <div class="insta-text" id="merchantViewsNotificationText" data-i18n="notif_views_loading" style="color:#374151;">Loading total views...</div>
+                <div class="insta-time" style="font-size:11px; color:#9CA3AF; margin-top:3px;" data-i18n="notif_today">Today</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
 
     <!-- Separate Edit Section: requires login; banner changes are available here only -->
     <main id="tab-edit-section" class="tab-screen">
       <div class="action-card">
-        <div class="action-card-title"> Edit Section</div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px; border-bottom:1px solid #E5E7EB; padding-bottom:10px;">
+          <button type="button" onclick="switchMerchantTab('profile', document.querySelectorAll('.nav-item')[4])" style="background:none; border:none; font-size:20px; font-weight:bold; cursor:pointer; color:#111827; display:flex; align-items:center;" title="वापस जाएं">←</button>
+          <div class="action-card-title" style="margin-bottom:0;">Edit Section</div>
+        </div>
         <div class="profile-banner-box"><img id="editMerchantBannerDisplay" src="" alt="Store Banner"></div>
         <div class="progress-container" id="bannerProgressBarContainer"><div class="progress-bar-fill" id="bannerProgressBarFill"></div><div class="progress-text" id="bannerProgressText">0%</div></div>
-        <div style="margin-bottom: 14px;">
-          <input type="file" id="bannerUploadInput" accept="image/*" style="display: none;" onchange="handleMerchantImageUpload(event)">
-          <button type="button" class="btn-compact" onclick="document.getElementById('bannerUploadInput').click()" style="background: #2563EB; color: #fff; width: 100%;"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 30 L 30 30 L 38 20 L 62 20 L 70 30 L 85 30 C 90 30, 90 85, 85 85 L 15 85 C 10 85, 10 30, 15 30 Z M 50 40 A 18 18 0 1 0 50 76 A 18 18 0 1 0 50 40 Z"/></svg> <span data-i18n="banner_btn">बैनर बदलें</span></button>
+        <div style="margin-bottom:14px;">
+          <input type="file" id="bannerUploadInput" accept="image/*" style="display:none;" onchange="handleMerchantImageUpload(event)">
+          <button type="button" class="btn-compact" onclick="document.getElementById('bannerUploadInput').click()" style="background:#2563EB; color:#fff; width:100%;"><span data-i18n="banner_btn">बैनर बदलें</span></button>
         </div>
         <div class="input-group"><label data-i18n="store_name_label">दुकान का नाम</label><input type="text" id="editStoreName" disabled value=""></div>
         <div class="input-group"><label data-i18n="store_addr_label">पूरा पता</label><input type="text" id="editStoreAddress" disabled value=""></div>
-        <div class="input-group" style="margin-top: 10px;"><label data-i18n="store_phone_label">फोन नंबर</label><input type="text" id="editStorePhone" disabled value=""></div>
-        <div class="btn-row" style="margin-top: 14px;">
-          <button type="button" class="btn-compact" id="editProfileBtn" onclick="toggleEditProfile()" style="background: #4B5563; color: #fff; flex: 1;" disabled> <span data-i18n="edit_btn">एडिट</span></button>
-          <button type="button" class="btn-compact btn-approve-comp" id="saveProfileBtn" onclick="saveMerchantProfile()" style="flex: 1; display: none;" data-i18n="save_btn">💾 सेव</button>
+        <div class="input-group" style="margin-top:10px;"><label data-i18n="store_phone_label">फोन नंबर</label><input type="text" id="editStorePhone" disabled value=""></div>
+        <div class="btn-row" style="margin-top:14px;">
+          <button type="button" class="btn-compact" id="editProfileBtn" onclick="toggleEditProfile()" style="background:#4B5563; color:#fff; flex:1;" disabled><span data-i18n="edit_btn">एडिट</span></button>
+          <button type="button" class="btn-compact btn-approve-comp" id="saveProfileBtn" onclick="saveMerchantProfile()" style="flex:1; display:none;" data-i18n="save_btn">💾 सेव</button>
         </div>
-        <div class="btn-row" style="margin-top: 10px;"><button type="button" class="btn-compact" id="changePinBtn" onclick="openChangePinPrompt()" style="background: #DC2626; color: #fff; width: 100%; display: none;"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 30 40 L 30 25 C 30 10, 70 10, 70 25 L 70 40 Z M 20 40 L 80 40 L 80 90 L 20 90 Z"/></svg> <span data-i18n="pin_btn">पिन बदलें</span></button></div>
+        <div class="btn-row" style="margin-top:10px;"><button type="button" class="btn-compact" id="changePinBtn" onclick="openChangePinPrompt()" style="background:#DC2626; color:#fff; width:100%; display:none;"><span data-i18n="pin_btn">पिन बदलें</span></button></div>
       </div>
     </main>
 
@@ -395,20 +556,9 @@
         </div>
         <div data-i18n="nav_network">नेटवर्क</div>
       </div>
-      <div class="nav-item" onclick="switchMerchantTab('calculator', this)">
-        <div class="icon">
-          <svg width="26" height="26" viewBox="0 0 100 100">
-            <rect x="20" y="15" width="60" height="70" rx="8" fill="none" stroke="#111827" stroke-width="8"/>
-            <rect x="32" y="30" width="36" height="14" rx="4" fill="#111827"/>
-            <circle cx="35" cy="58" r="5" fill="#111827"/>
-            <circle cx="50" cy="58" r="5" fill="#111827"/>
-            <circle cx="65" cy="58" r="5" fill="#111827"/>
-            <circle cx="35" cy="73" r="5" fill="#111827"/>
-            <circle cx="50" cy="73" r="5" fill="#111827"/>
-            <circle cx="65" cy="73" r="5" fill="#111827"/>
-          </svg>
-        </div>
-        <div data-i18n="nav_calc">कैलकुलेटर</div>
+      <div class="nav-item" onclick="switchMerchantTab('notifications', this)">
+        <div class="icon"><svg width="26" height="26" viewBox="0 0 100 100" fill="none" stroke="#111827" stroke-width="8" stroke-linejoin="round"><path d="M20 72h60l-8-10V42a22 22 0 0 0-44 0v20z"/><path d="M40 82a10 10 0 0 0 20 0"/></svg></div>
+        <div data-i18n="nav_notifications">नोटिफिकेशन</div>
       </div>
       <div class="nav-item" onclick="switchMerchantTab('profile', this)">
         <div class="icon">
@@ -422,10 +572,45 @@
     </nav>
   </div>
 
+  <div id="videoEditorOverlay" style="position: fixed; inset: 0; background: #000000; z-index: 99999999; display: none; flex-direction: column; overflow-y: auto; color: #FFFFFF; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+    
+    <!-- टॉप हेडर (इंस्टाग्राम स्टाइल: बैक ऐरो और टाइटल) -->
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid #1F2937; position: sticky; top: 0; background: #000000; z-index: 10;">
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <button onclick="closeVideoEditor()" style="background: none; border: none; color: #FFF; font-size: 22px; cursor: pointer; display: flex; align-items: center;">←</button>
+        <span style="font-size: 16px; font-weight: 900;">New reel</span>
+      </div>
+    </div>
+  
+    <!-- मुख्य बॉडी कंटेंट -->
+    <div style="padding: 16px; max-width: 480px; margin: 0 auto; width: 100%; flex: 1; padding-bottom: 72px;">
+      
+      <!-- वीडियो कवर / प्रीव्यू बॉक्स (इंस्टाग्राम जैसा सेंटर कार्ड) -->
+      <div style="background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 14px; text-align: center; margin-bottom: 18px;">
+        <div style="width: 100%; max-height: 260px; border-radius: 12px; overflow: hidden; background: #000; display: flex; justify-content: center; align-items: center; margin-bottom: 12px;">
+          <video id="editorVideoPreview" controls playsinline style="width: 100%; max-height: 260px; object-fit: contain;"></video>
+        </div>
+      </div>
+  
+      <!-- कैप्शन लिखने का एरिया (Instagram Style) -->
+      <div style="margin-bottom: 16px;">
+        <textarea id="editorCaptionInput" rows="3" placeholder="Write a caption..." style="width: 100%; background: transparent; border: none; color: #FFFFFF; font-size: 14px; outline: none; resize: none; border-bottom: 1px solid #262626; padding-bottom: 8px;"></textarea>
+      </div>
+  
+    </div>
+  
+    <!-- One meaningful action: upload the video with its caption -->
+    <div style="position:fixed; bottom:0; left:0; right:0; background:#000000; border-top:1px solid #1F2937; padding:12px 16px; max-width:480px; margin:0 auto; z-index:20;">
+      <button type="button" onclick="confirmAndUploadEditedVideo()" style="width:100%; padding:12px; background:#3B82F6; color:#FFFFFF; border:none; border-radius:24px; font-size:14px; font-weight:900; cursor:pointer;">वीडियो अपलोड करें</button>
+    </div>
+  
+  </div>
+
   <!-- Reel Action Sheet -->
   <div class="reel-action-sheet" id="reelActionSheet" onclick="closeReelActionSheetOnOutside(event)">
     <div class="reel-action-card">
       <div class="action-sheet-title" data-i18n="sheet_title">⚙ मीडिया विकल्प</div>
+      <div id="reelViewsInfoBox" style="background:#F3F4F6; color:#111827; padding:10px; border-radius:8px; margin-bottom:10px; font-size:12px; font-weight:800; text-align:center;">👁️ व्यूज़ लोड हो रहे हैं...</div>
       <button class="action-sheet-btn success" onclick="executeMediaAction('fullwatch')"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><rect x="10" y="20" width="55" height="60" rx="8"/><polygon points="70,35 90,25 90,75 70,65"/></svg> <span data-i18n="sheet_watch">पूरा देखें / प्ले करें</span></button>
       <button class="action-sheet-btn" style="background:#EFF6FF; color:#1D4ED8; border-color:#BFDBFE;" onclick="executeMediaAction('edit')"> <span data-i18n="sheet_edit">कैप्शन एडिट करें</span></button>
       <button class="action-sheet-btn danger" onclick="executeMediaAction('delete')" data-i18n="sheet_del">🗑 डिलीट करें</button>
@@ -494,7 +679,13 @@
     let currentLang = localStorage.getItem('star_merchant_lang') || 'hi';
     let merchantNotesArray = JSON.parse(localStorage.getItem('merchant_notes')) || [];
     let selectedActiveMedia = null;
+    let activeSelectedVideoFile = null;
+    let activeVideoEventTarget = null;
+    let activeVideoPreviewUrl = '';
+    let lastUploadTimestamp = 0;
+    const UPLOAD_COOLDOWN_MS = 3000;
     let longPressTimer = null;
+    let touchMoved = false;
     let cachedMerchantMediaList = [];
     let latestNotiSignatureCount = 0;
 
@@ -508,6 +699,26 @@
         gate_btn: "सुरक्षित लॉगिन",
         gate_register: "नया मर्चेंट अकाउंट रजिस्टर करें",
         noti_title: "🔔 आपके सपोर्ट क्वेरीज़ एवं अलर्ट्स",
+        notifications_heading: "🔔 नोटिफिकेशन्स & सपोर्ट",
+        notif_support_tab: "सपोर्ट क्वेरी",
+        notif_likes_tab: "लाइक्स & व्यूज़",
+        notif_admin_help: "एडमिन से सहायता लें",
+        notif_query_placeholder: "अपनी समस्या या क्वेरी यहाँ लिखें...",
+        notif_send: "सपोर्ट को भेजें",
+        notif_history_title: "आपके सवाल और एडमिन के जवाब:",
+        notif_login_required: "कृपया पहले लॉगिन करें।",
+        notif_views_loading: "कुल व्यूज़ लोड हो रहे हैं...",
+        notif_today: "आज",
+        notif_dismiss: "हटाएं",
+        nav_notifications: "नोटिफिकेशन",
+        notif_title: "नोटिफिकेशन और सपोर्ट",
+        notif_sub: "क्वेरी और एनालिटिक्स के अपडेट पाते रहें",
+        support_tab_btn: "सपोर्ट क्वेरी",
+        likes_tab_btn: "लाइक्स & व्यूज़",
+        get_help_title: "एडमिन से सहायता लें",
+        send_support_btn: "सपोर्ट को भेजें",
+        admin_replies_title: "आपके सवाल और एडमिन के जवाब:",
+        no_queries_text: "अभी तक कोई सवाल नहीं भेजा गया।",
         loading: "लोड किया जा रहा है...",
         status_closed: "🔴 स्टोर स्थिति बंद",
         status_open: "🟢 स्टोर स्थिति चालू (Live)",
@@ -520,8 +731,8 @@
         offer_cond_label: "शर्तें / पैरामीटर्स (Terms & Conditions)",
         offer_cond_ph: "यहाँ अपनी शर्तें विस्तार से लिखें...",
         offer_btn: "लाइव ऑफर अपडेट करें",
-        studio_title: "🎬 मर्चेंट मीडिया स्टूडियो",
-        studio_sub: "लॉगिन करने के बाद यहाँ आपकी रील्स और पोस्ट्स दिखाई देंगी।",
+        studio_title: "मर्चेंट मीडिया स्टूडियो",
+        studio_sub: "एंगेजमेंट बढ़ाने के लिए और वीडियो पोस्ट करें।",
         reel_upload_title: "📹 नई रील (वीडियो) अपलोड करें",
         reel_cap_label: "रील कैप्शन",
         reel_cap_ph: "जैसे: बेस्ट ऑफर!",
@@ -564,6 +775,26 @@
         gate_btn: "Secure Login",
         gate_register: "Register New Merchant Account",
         noti_title: "🔔 Your Support Queries & Alerts",
+        notifications_heading: "🔔 Notifications & Support",
+        notif_support_tab: "Support Queries",
+        notif_likes_tab: "Likes & Views",
+        notif_admin_help: "Get help from Admin",
+        notif_query_placeholder: "Write your issue or query here...",
+        notif_send: "Send to Support",
+        notif_history_title: "Your questions and Admin replies:",
+        notif_login_required: "Please login first.",
+        notif_views_loading: "Loading total views...",
+        notif_today: "Today",
+        notif_dismiss: "Dismiss",
+        nav_notifications: "Notifications",
+        notif_title: "Notifications & Support",
+        notif_sub: "Stay updated with queries and analytics",
+        support_tab_btn: "Support Queries",
+        likes_tab_btn: "Likes & Views",
+        get_help_title: "Get help from Admin",
+        send_support_btn: "Send to Support",
+        admin_replies_title: "Your questions and Admin replies:",
+        no_queries_text: "No queries sent yet.",
         loading: "Loading...",
         status_closed: "🔴 Store Status Closed",
         status_open: "🟢 Store Status Open (Live)",
@@ -576,8 +807,8 @@
         offer_cond_label: "Terms & Conditions",
         offer_cond_ph: "Write your terms in detail here...",
         offer_btn: "Update Live Offer",
-        studio_title: "🎬 Merchant Media Studio",
-        studio_sub: "Your uploaded reels and posts will appear here after login.",
+        studio_title: "Merchant Media Studio",
+        studio_sub: "Post more videos to increase engagement.",
         reel_upload_title: "📹 Upload New Reel (Video)",
         reel_cap_label: "Reel Caption",
         reel_cap_ph: "e.g., Best Offer!",
@@ -624,7 +855,7 @@
     function applyLanguageToEntireDOM() {
       document.documentElement.lang = currentLang;
       const langBtn = document.getElementById('langSwitchBtn');
-      if (langBtn) langBtn.innerText = currentLang === 'hi' ? '🌐 EN' : '🌐 HI';
+      if (langBtn) langBtn.innerText = currentLang === 'hi' ? '🌐 HI' : '🌐 EN';
 
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
@@ -648,6 +879,10 @@
       if (currentMerchantData) {
         updateStoreStatusUI(currentMerchantData.is_open_today);
         renderMediaGridFromList(cachedMerchantMediaList);
+        const notificationTab = document.getElementById('tab-notifications');
+        const notificationSidebar = document.getElementById('notiOverlay');
+        if (notificationTab && notificationTab.classList.contains('active')) loadFullScreenNotifications();
+        if (notificationSidebar && notificationSidebar.classList.contains('open')) fetchNotificationsSidebar();
       }
     }
 
@@ -675,11 +910,25 @@
       } catch (e) {}
     }
 
+
+    const appSystemThemeQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+    function applySystemTheme(isDark) {
+      const darkMode = typeof isDark === 'boolean' ? isDark : !!(appSystemThemeQuery && appSystemThemeQuery.matches);
+      document.documentElement.classList.toggle('system-dark', darkMode);
+      document.body.classList.toggle('dark-theme', darkMode);
+      const themeMeta = document.getElementById('appThemeColor');
+      if (themeMeta) themeMeta.setAttribute('content', darkMode ? '#000000' : '#F8F9FA');
+    }
+    if (appSystemThemeQuery) {
+      if (appSystemThemeQuery.addEventListener) appSystemThemeQuery.addEventListener('change', event => applySystemTheme(event.matches));
+      else if (appSystemThemeQuery.addListener) appSystemThemeQuery.addListener(event => applySystemTheme(event.matches));
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
+      applySystemTheme();
       applyLanguageToEntireDOM();
-      renderMerchantNotes();
-      document.getElementById('mainLoginGate').style.display = 'flex'; 
-      checkSavedSessionWithGate(); 
+      document.getElementById('mainLoginGate').style.display = 'flex';
+      checkSavedSessionWithGate();
     });
 
     // 🎯 AUTO-SEEN & DISMISS NOTIFICATION ENGINE (Badge disappears once seen)
@@ -858,7 +1107,7 @@
             <div style="background:#FFF; border:1px solid #E5E7EB; border-radius:12px; padding:14px; margin-bottom:12px;">
               <div style="display:flex; align-items:center; gap:12px;">
                 <div style="width:45px; height:45px; border-radius:50%; background:#111827; overflow:hidden;"><img src="${escapeHtml(m.profile_image_url || 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=100')}" style="width:100%; height:100%; object-fit:cover;"></div>
-                <div style="flex:1;"><div style="font-size:15px; font-weight:900; color:#111827;">${escapeHtml(m.shop_name)}</div><div style="font-size:11px; color:#6B7280;">📍 ${escapeHtml(m.address || 'Delhi')}</div></div>
+                <div style="flex:1;"><div style="font-size:15px; font-weight:900; color:#F59E0B;">${escapeHtml(m.shop_name)}</div><div style="font-size:11px; color:#6B7280;">📍 ${escapeHtml(m.address || 'Delhi')}</div></div>
               </div>
               <div style="display:flex; gap:10px; margin-top:14px;">
                 <a href="${callLink}" style="flex:1; text-align:center; background:#EFF6FF; color:#1D4ED8; padding:10px; border-radius:10px; font-weight:800; text-decoration:none;">${currentLang === 'en' ? ' Call' : ' कॉल'}</a>
@@ -908,8 +1157,8 @@
       document.getElementById('profileAuthBtn').innerHTML = `<svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 30 40 L 30 25 C 30 10, 70 10, 70 25 L 70 40 Z M 20 40 L 80 40 L 80 90 L 20 90 Z"/></svg> Logout`;
       document.getElementById('editProfileBtn').disabled = false;
       document.getElementById('changePinBtn').style.display = 'inline-flex';
-      document.getElementById('studioSubTitle').innerText = `Merchant ID: ${data.id}`;
       loadMerchantViewCount(data.id);
+      loadMerchantClaimCount(data.id);
       if (data.profile_image_url) {
         document.getElementById('merchantBannerDisplay').src = data.profile_image_url;
         document.getElementById('editMerchantBannerDisplay').src = data.profile_image_url;
@@ -944,6 +1193,46 @@
       metric.innerText = currentLang === 'en' ? `${totalViews} Views` : `${totalViews} व्यूज़`;
     }
 
+    async function loadMerchantClaimCount(merchantId) {
+      const metric = document.getElementById('metricClaimsVal');
+      if (!metric || !supabaseClient || !merchantId) return;
+      const { count, error } = await supabaseClient
+        .from('merchant_claims')
+        .select('id', { count: 'exact', head: true })
+        .eq('merchant_id', merchantId);
+      if (error) {
+        console.error('Merchant claim count fetch failed:', error.message);
+        metric.innerText = '0';
+        return;
+      }
+      metric.innerText = String(count || 0);
+    }
+
+    const preloadedMerchantMediaUrls = new Set();
+
+    // Preload video metadata and photo resources once per media URL.
+    function preloadMerchantThumbnails(mediaList) {
+      if (!Array.isArray(mediaList)) return;
+      mediaList.forEach(item => {
+        const mediaUrl = item.reel_url || item.video_url || item.post_image_url || item.image_url || item.url;
+        if (!mediaUrl || preloadedMerchantMediaUrls.has(mediaUrl)) return;
+        preloadedMerchantMediaUrls.add(mediaUrl);
+        const lowerUrl = String(mediaUrl).toLowerCase();
+        const isVideo = item.media_type === 'video' || /\.(mp4|mov|webm|m4v)(?:[?#]|$)/.test(lowerUrl);
+        if (isVideo) {
+          const videoPreloader = document.createElement('video');
+          videoPreloader.preload = 'metadata';
+          videoPreloader.muted = true;
+          videoPreloader.playsInline = true;
+          videoPreloader.src = mediaUrl;
+          videoPreloader.load();
+        } else {
+          const imgPreloader = new Image();
+          imgPreloader.src = mediaUrl;
+        }
+      });
+    }
+
     // 🎬 OMNI-ADAPTIVE MEDIA FETCHER & RENDERER
     function renderMediaGridFromList(list) {
       const container = document.getElementById('merchantReelsGridContainer');
@@ -953,8 +1242,9 @@
         return;
       }
 
+      preloadMerchantThumbnails(list);
       container.innerHTML = list.map(item => {
-        const mediaUrl = item.video_url || item.url || item.image_url || '';
+        const mediaUrl = item.reel_url || item.video_url || item.post_image_url || item.image_url || item.url || '';
         const isVideo = item.media_type === 'video' || (!item.media_type && (mediaUrl.toLowerCase().includes('.mp4') || mediaUrl.toLowerCase().includes('.webm') || mediaUrl.toLowerCase().includes('reel') || mediaUrl.toLowerCase().includes('video')));
         const capText = item.caption || item.description || '';
         const safeId = String(item.id).replace(/'/g, "\\'");
@@ -965,11 +1255,13 @@
                onclick="openMediaOptionsSheet('${safeId}', '${mType}')"
                onmousedown="startLongPress(event, '${safeId}', '${mType}')"
                ontouchstart="startLongPress(event, '${safeId}', '${mType}')"
+               onmousemove="handleTouchMove()"
+               ontouchmove="handleTouchMove()"
                onmouseup="cancelLongPress()"
                ontouchend="cancelLongPress()">
             ${isVideo
-              ? `<video src="${encodeURI(mediaUrl)}#t=0.1" preload="metadata" muted playsinline></video><div class="media-type-badge"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><rect x="10" y="20" width="55" height="60" rx="8"/><polygon points="70,35 90,25 90,75 70,65"/></svg> ${currentLang === 'en' ? 'Reel' : 'रील'}</div>`
-              : `<img src="${encodeURI(mediaUrl)}" alt="Post"><div class="media-type-badge">${currentLang === 'en' ? '🖼️ Post' : '🖼️ पोस्ट'}</div>`
+              ? `<video src="${escapeHtml(mediaUrl)}#t=0.1" preload="metadata" muted playsinline></video><div class="media-type-badge"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><rect x="10" y="20" width="55" height="60" rx="8"/><polygon points="70,35 90,25 90,75 70,65"/></svg> ${currentLang === 'en' ? 'Reel' : 'रील'}</div>`
+              : `<img src="${escapeHtml(mediaUrl)}" alt="Post"><div class="media-type-badge">${currentLang === 'en' ? '🖼️ Post' : '🖼️ पोस्ट'}</div>`
             }
             ${capText ? `<div class="media-caption-tag">${escapeHtml(capText)}</div>` : ''}
           </div>`;
@@ -993,7 +1285,7 @@
         const dbUrls = new Set(dbMatches.map(x => x.video_url));
         const merged = [...dbMatches];
         localCached.forEach(loc => {
-          const locUrl = loc.video_url || loc.url || loc.image_url;
+          const locUrl = loc.reel_url || loc.video_url || loc.post_image_url || loc.image_url || loc.url;
           if (locUrl && !dbUrls.has(locUrl)) merged.push(loc);
         });
         cachedMerchantMediaList = merged;
@@ -1097,42 +1389,103 @@
     function handleMediaSelection(event, type) {
       const file = event.target.files[0];
       if (!file || !currentMerchantData) return;
-      if (type === 'video' && file.size > 25 * 1024 * 1024) {
-        event.target.value = "";
-        return showCustomAlert(currentLang === 'en' ? "Error" : "त्रुटि", currentLang === 'en' ? "Video must be under 25MB." : "वीडियो 25MB से कम होनी चाहिए।");
-      }
-      if (type === 'image' && file.size > 8 * 1024 * 1024) {
-        event.target.value = "";
-        return showCustomAlert(currentLang === 'en' ? "Error" : "त्रुटि", currentLang === 'en' ? "Photo must be under 8MB." : "फोटो 8MB से कम होनी चाहिए।");
-      }
-
       if (type === 'video') {
-        const videoElement = document.createElement('video');
-        videoElement.preload = 'metadata';
-        videoElement.onloadedmetadata = function() {
-          window.URL.revokeObjectURL(videoElement.src);
-          if (videoElement.duration > 31) {
-            showCustomAlert(currentLang === 'en' ? "Upload Failed ❌" : "अपलोड फेल ❌", currentLang === 'en' ? "Please select a video of 30 seconds or less." : "कृपया 30 सेकंड या उससे कम का वीडियो चुनें।");
-            event.target.value = "";
+        if (file.size > 25 * 1024 * 1024) {
+          event.target.value = '';
+          return showCustomAlert(currentLang === 'en' ? 'Error' : 'त्रुटि', currentLang === 'en' ? 'Video must be under 25MB.' : 'वीडियो 25MB से कम होनी चाहिए।');
+        }
+        activeSelectedVideoFile = file;
+        activeVideoEventTarget = event.target;
+        const overlay = document.getElementById('videoEditorOverlay');
+        const videoPrev = document.getElementById('editorVideoPreview');
+        const captionInp = document.getElementById('editorCaptionInput');
+        const trimStart = document.getElementById('trimStartInput');
+        const trimEnd = document.getElementById('trimEndInput');
+        if (!overlay || !videoPrev) return;
+        if (activeVideoPreviewUrl) URL.revokeObjectURL(activeVideoPreviewUrl);
+        activeVideoPreviewUrl = URL.createObjectURL(file);
+        videoPrev.onloadedmetadata = function() {
+          if (videoPrev.duration > 31) {
+            closeVideoEditor();
+            showCustomAlert(currentLang === 'en' ? 'Upload Failed ❌' : 'अपलोड फेल ❌', currentLang === 'en' ? 'Please select a video of 30 seconds or less.' : 'कृपया 30 सेकंड या उससे कम का वीडियो चुनें।');
             return;
           }
-          executeMediaUploadToSupabase(file, type, event);
+          if (trimStart) { trimStart.value = '0'; trimStart.max = String(videoPrev.duration); }
+          if (trimEnd) { trimEnd.value = String(Math.min(30, videoPrev.duration)); trimEnd.max = String(videoPrev.duration); }
+          if (captionInp) captionInp.value = '';
+          overlay.style.display = 'flex';
         };
-        videoElement.onerror = function() {
-          executeMediaUploadToSupabase(file, type, event);
+        videoPrev.onerror = function() {
+          if (captionInp) captionInp.value = '';
+          overlay.style.display = 'flex';
         };
-        videoElement.src = URL.createObjectURL(file);
-      } else {
-        executeMediaUploadToSupabase(file, type, event);
+        videoPrev.src = activeVideoPreviewUrl;
+      } else if (type === 'image') {
+        if (file.size > 8 * 1024 * 1024) {
+          event.target.value = '';
+          return showCustomAlert(currentLang === 'en' ? 'Error' : 'त्रुटि', currentLang === 'en' ? 'Photo must be under 8MB.' : 'फोटो 8MB से कम होनी चाहिए।');
+        }
+        handleMerchantImageUpload(event);
       }
+    }
+
+    function closeVideoEditor() {
+      const overlay = document.getElementById('videoEditorOverlay');
+      const videoPrev = document.getElementById('editorVideoPreview');
+      if (overlay) overlay.style.display = 'none';
+      if (videoPrev) { videoPrev.pause(); videoPrev.removeAttribute('src'); videoPrev.load(); }
+      if (activeVideoPreviewUrl) URL.revokeObjectURL(activeVideoPreviewUrl);
+      activeVideoPreviewUrl = '';
+      activeSelectedVideoFile = null;
+      if (activeVideoEventTarget) activeVideoEventTarget.value = '';
+      activeVideoEventTarget = null;
+    }
+
+    async function confirmAndUploadEditedVideo() {
+      const now = Date.now();
+      if (now - lastUploadTimestamp < UPLOAD_COOLDOWN_MS) {
+        const remainingSeconds = Math.ceil((UPLOAD_COOLDOWN_MS - (now - lastUploadTimestamp)) / 1000);
+        showCustomAlert('धीमी गति ⏳', `कृपया ${remainingSeconds} सेकंड रुकें, सर्वर पर लोड कम रखने के लिए थोड़ा गैप जरूरी है।`);
+        return;
+      }
+
+      if (!activeSelectedVideoFile || !currentMerchantData) {
+        closeVideoEditor();
+        return;
+      }
+
+      const captionInp = document.getElementById('editorCaptionInput');
+      const finalCaption = captionInp ? captionInp.value.trim() || 'विशेष ऑफर' : 'विशेष ऑफर';
+      const fileToUpload = activeSelectedVideoFile;
+      const eventTarget = activeVideoEventTarget;
+      closeVideoEditor();
+
+      lastUploadTimestamp = Date.now();
+      const pbContainer = document.getElementById('reelProgressBarContainer');
+      const pbFill = document.getElementById('reelProgressBarFill');
+      const pbText = document.getElementById('reelProgressText');
+      if (pbContainer) {
+        pbContainer.style.display = 'block';
+        if (pbFill) pbFill.style.width = '20%';
+        if (pbText) pbText.innerText = 'अपलोड की तैयारी हो रही है...';
+      }
+
+      setTimeout(async () => {
+        await executeMediaUploadToSupabaseWithCaption(fileToUpload, 'video', eventTarget, finalCaption);
+      }, 1500);
     }
 
     function sanitizeMediaUrl(rawUrl) {
       if (!rawUrl) return '';
-      let formattedUrl = String(rawUrl).trim();
-      formattedUrl = formattedUrl.replace(/([^:]\/)\/+/g, "$1");
-      return encodeURI(formattedUrl);
+      try {
+        const parsedUrl = new URL(String(rawUrl).trim(), window.location.href);
+        if (parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:') return '';
+        return parsedUrl.href;
+      } catch (error) {
+        return '';
+      }
     }
+
 
     function getNextMerchantImageSequence(merchantId) {
       const key = `star_image_sequence_${String(merchantId)}`;
@@ -1142,50 +1495,73 @@
       return next;
     }
 
-    async function executeMediaUploadToSupabase(file, type, event) {
-      const caption = type === 'video'
-        ? (document.getElementById('uploadReelCaptionInput').value.trim() || (currentLang === 'en' ? "Special Offer" : "विशेष ऑफर"))
-        : (document.getElementById('uploadPostCaptionInput').value.trim() || (currentLang === 'en' ? "New Post" : "नई पोस्ट"));
-      
+    async function executeMediaUploadToSupabase(file, type, event, customCaption) {
+      return executeMediaUploadToSupabaseWithCaption(file, type, event && event.target ? event.target : null, customCaption);
+    }
+
+    async function executeMediaUploadToSupabaseWithCaption(file, type, eventTarget, customCaption) {
+      const captionInput = document.getElementById(type === 'video' ? 'uploadReelCaptionInput' : 'uploadPostCaptionInput');
+      const fallbackCaption = type === 'video'
+        ? (currentLang === 'en' ? 'Special Offer' : 'विशेष ऑफर')
+        : (currentLang === 'en' ? 'New Post' : 'नई पोस्ट');
+      const caption = customCaption !== undefined ? customCaption : (captionInput?.value.trim() || fallbackCaption);
       const pbContainer = document.getElementById('reelProgressBarContainer');
       const pbFill = document.getElementById('reelProgressBarFill');
       const pbText = document.getElementById('reelProgressText');
-      pbContainer.style.display = 'block';
-      pbFill.style.width = '40%';
-      pbText.innerText = currentLang === 'en' ? 'Uploading media...' : 'फाइल अपलोड हो रही है...';
+      const setProgress = (width, text) => {
+        if (pbContainer) pbContainer.style.display = 'block';
+        if (pbFill) pbFill.style.width = width;
+        if (pbText) pbText.innerText = text;
+      };
+      setProgress('30%', currentLang === 'en' ? 'Preparing sequence...' : 'सीक्वेंस तैयार हो रहा है...');
 
-      const ext = (file.name && file.name.includes('.')) ? file.name.split('.').pop() : (type === 'video' ? 'mp4' : 'jpg');
       const cleanId = String(currentMerchantData.id).replace(/[^a-zA-Z0-9]/g, '_');
-      const imageSequence = type === 'image' ? getNextMerchantImageSequence(currentMerchantData.id) : null;
-      const fileName = type === 'image'
-        ? `merchant_photo_${cleanId}_${imageSequence}_${Date.now()}.jpg`
-        : `${type}_${cleanId}_${Date.now()}.${ext}`;
+      const mediaTable = type === 'video' ? 'merchant_reels' : 'merchant_posts';
+      let nextSequenceNumber = 1;
+      try {
+        const { count, error: countError } = await supabaseClient
+          .from(mediaTable)
+          .select('id', { count: 'exact', head: true })
+          .eq('merchant_id', currentMerchantData.id);
+        if (countError) throw countError;
+        nextSequenceNumber = (count || 0) + 1;
+      } catch (countError) {
+        console.warn(`Could not determine ${mediaTable} sequence; using 1 in filename:`, countError.message || countError);
+      }
 
+      const ext = type === 'video'
+        ? ((file.name && file.name.includes('.')) ? file.name.split('.').pop().toLowerCase() : 'mp4')
+        : 'jpg';
+      const sequenceLabel = type === 'video' ? 'reel' : 'post';
+      const fileName = `${cleanId}_${sequenceLabel}_${nextSequenceNumber}_${Date.now()}.${ext}`;
       const preferredBucket = type === 'video' ? 'reels' : 'posts';
-      let finalPublicUrl = '';
 
       try {
+        setProgress('60%', currentLang === 'en' ? `Uploading item #${nextSequenceNumber}...` : `आइटम #${nextSequenceNumber} अपलोड हो रहा है...`);
         let uploadSuccessBucket = preferredBucket;
-        const { error: upErr1 } = await supabaseClient.storage.from(preferredBucket).upload(fileName, file, { cacheControl: '3600', upsert: true });
-        
-        if (upErr1) {
-          const { error: upErr2 } = await supabaseClient.storage.from('merchants').upload(fileName, file, { cacheControl: '3600', upsert: true });
-          if (upErr2) throw upErr1;
+        const { error: uploadError } = await supabaseClient.storage
+          .from(preferredBucket)
+          .upload(fileName, file, { cacheControl: '3600', upsert: true });
+        if (uploadError) {
+          const { error: fallbackError } = await supabaseClient.storage
+            .from('merchants')
+            .upload(fileName, file, { cacheControl: '3600', upsert: true });
+          if (fallbackError) throw uploadError;
           uploadSuccessBucket = 'merchants';
         }
 
-        pbFill.style.width = '75%';
-        pbText.innerText = currentLang === 'en' ? 'Saving to feed...' : 'फीड में सेव किया जा रहा है...';
-
         const { data: publicUrlData } = supabaseClient.storage.from(uploadSuccessBucket).getPublicUrl(fileName);
-        finalPublicUrl = sanitizeMediaUrl(publicUrlData.publicUrl);
-
-        const mediaTable = type === 'video' ? 'merchant_reels' : 'merchant_posts';
+        const finalPublicUrl = sanitizeMediaUrl(publicUrlData.publicUrl);
         const payload = type === 'video'
           ? { merchant_id: currentMerchantData.id, reel_url: finalPublicUrl, caption }
           : { merchant_id: currentMerchantData.id, post_image_url: finalPublicUrl, caption };
-        const { data: insertedRow, error: insertError } = await supabaseClient.from(mediaTable).insert([payload]).select().single();
+        const { data: insertedRow, error: insertError } = await supabaseClient
+          .from(mediaTable)
+          .insert([payload])
+          .select()
+          .single();
         if (insertError) throw insertError;
+
         const newMediaObj = {
           ...insertedRow,
           video_url: type === 'video' ? insertedRow.reel_url : insertedRow.post_image_url,
@@ -1195,39 +1571,61 @@
         cachedMerchantMediaList = [newMediaObj, ...cachedMerchantMediaList.filter(x => (x.video_url || x.url) !== finalPublicUrl)];
         saveLocalMediaBackup(currentMerchantData.id, cachedMerchantMediaList);
         renderMediaGridFromList(cachedMerchantMediaList);
+        setProgress('100%', currentLang === 'en' ? `Successfully saved #${nextSequenceNumber}!` : `सफलतापूर्वक #${nextSequenceNumber} सेव हो गया!`);
 
-        pbFill.style.width = '100%';
-        pbText.innerText = currentLang === 'en' ? 'Success! Live in grid!' : 'सफलता! ग्रिड में लाइव हो गया!';
-
-        if (type === 'video') document.getElementById('uploadReelCaptionInput').value = '';
-        else document.getElementById('uploadPostCaptionInput').value = '';
-
+        if (captionInput) captionInput.value = '';
         setTimeout(() => {
-          pbContainer.style.display = 'none';
-          pbFill.style.width = '0%';
-          fetchMerchantMedia(currentMerchantData.id);
-        }, 1200);
-
+          if (pbContainer) pbContainer.style.display = 'none';
+          if (pbFill) pbFill.style.width = '0%';
+          if (currentMerchantData) fetchMerchantMedia(currentMerchantData.id);
+        }, 1000);
       } catch (err) {
-        pbContainer.style.display = 'none';
-        showCustomAlert(currentLang === 'en' ? "Upload Failed" : "अपलोड फेल", err.message);
+        if (pbContainer) pbContainer.style.display = 'none';
+        showCustomAlert(currentLang === 'en' ? 'Upload Failed' : 'अपलोड फेल', err.message);
+      } finally {
+        if (eventTarget) eventTarget.value = '';
       }
-      if (event && event.target) event.target.value = "";
     }
 
-    function openMediaOptionsSheet(mediaId, mediaType) {
+    async function openMediaOptionsSheet(mediaId, mediaType) {
       selectedActiveMedia = { id: mediaId, type: mediaType };
-      document.getElementById('reelActionSheet').classList.add('open');
+      const sheet = document.getElementById('reelActionSheet');
+      if (sheet) sheet.classList.add('open');
+
+      const viewsInfoBox = document.getElementById('reelViewsInfoBox');
+      if (!viewsInfoBox) return;
+      viewsInfoBox.innerText = currentLang === 'en' ? 'Fetching views...' : 'व्यूज़ लोड हो रहे हैं...';
+      try {
+        if (!supabaseClient) throw new Error('SUPABASE_CLIENT_UNAVAILABLE');
+        const { count, error } = await supabaseClient
+          .from('merchant_views')
+          .select('*', { count: 'exact', head: true })
+          .eq('media_id', mediaId);
+        if (error) throw error;
+        viewsInfoBox.innerText = currentLang === 'en'
+          ? `👁️ Total Views for this media: ${count || 0}`
+          : `👁️ इस रील/पोस्ट के कुल व्यूज़: ${count || 0}`;
+      } catch (e) {
+        viewsInfoBox.innerText = currentLang === 'en' ? '👁️ Views: 0' : '👁️ व्यूज़: 0';
+      }
     }
 
     function startLongPress(e, mediaId, mediaType) {
       selectedActiveMedia = { id: mediaId, type: mediaType };
+      touchMoved = false;
       clearTimeout(longPressTimer);
       longPressTimer = setTimeout(() => {
-        document.getElementById('reelActionSheet').classList.add('open');
-      }, 450);
+        if (!touchMoved) openMediaOptionsSheet(mediaId, mediaType);
+      }, 600);
     }
-    function cancelLongPress() { clearTimeout(longPressTimer); }
+    function handleTouchMove() {
+      touchMoved = true;
+      clearTimeout(longPressTimer);
+    }
+    function cancelLongPress() {
+      clearTimeout(longPressTimer);
+      touchMoved = false;
+    }
     function closeReelActionSheet() { document.getElementById('reelActionSheet').classList.remove('open'); }
     function closeReelActionSheetOnOutside(e) { if(e.target.id === 'reelActionSheet') closeReelActionSheet(); }
 
@@ -1315,11 +1713,11 @@
           itemData = data ? { ...data, video_url: selectedActiveMedia.type === 'video' ? data.reel_url : data.post_image_url } : null;
         }
         if (itemData) {
-          let mediaUrl = itemData.video_url || itemData.url || itemData.image_url;
+          const mediaUrl = itemData.reel_url || itemData.video_url || itemData.post_image_url || itemData.image_url || itemData.url || '';
           let container = document.getElementById('merchantFullViewMediaContainer');
           container.innerHTML = selectedActiveMedia.type === 'video'
-            ? `<video src="${encodeURI(mediaUrl)}" controls autoplay loop playsinline style="width:100%; max-height:60vh; background:#000;"></video>`
-            : `<img src="${encodeURI(mediaUrl)}" style="width:100%; max-height:60vh; object-fit:contain;">`;
+            ? `<video src="${escapeHtml(mediaUrl)}" controls autoplay loop playsinline style="width:100%; max-height:60vh; background:#000;"></video>`
+            : `<img src="${escapeHtml(mediaUrl)}" style="width:100%; max-height:60vh; object-fit:contain;">`;
           document.getElementById('merchantFullViewCaption').innerText = itemData.caption || itemData.description || (currentLang === 'en' ? 'No caption' : 'कोई कैप्शन नहीं');
           document.getElementById('merchantFullViewOverlay').classList.add('open');
         }
@@ -1614,6 +2012,63 @@
       if(calcExpression === "Error") setTimeout(calcClear, 1500);
     }
 
+    function switchNotifSubTab(section, clickedButton) {
+      const support = document.getElementById('supportSubContent');
+      const likes = document.getElementById('likesSubContent');
+      if (support) support.style.display = section === 'support' ? 'block' : 'none';
+      if (likes) likes.style.display = section === 'likes' ? 'block' : 'none';
+      document.querySelectorAll('.notif-sub-tab').forEach(button => {
+        const active = button === clickedButton;
+        button.classList.toggle('active', active);
+        button.style.background = active ? '#2563EB' : '#1F2937';
+        button.style.color = active ? '#FFFFFF' : '#9CA3AF';
+      });
+    }
+
+    async function loadFullScreenNotifications() {
+      const queryList = document.getElementById('supportQueriesContainer') || document.getElementById('notifQueryHistoryList');
+      const viewsText = document.getElementById('merchantViewsNotificationText');
+      if (!currentMerchantData || !supabaseClient) {
+        if (queryList) queryList.innerHTML = `<div style="font-size:11px; color:#9CA3AF; text-align:center; padding:10px;">${currentLang === 'en' ? 'Please login first.' : 'कृपया पहले लॉगिन करें।'}</div>`;
+        return;
+      }
+      if (queryList) {
+        const { data, error } = await supabaseClient.from('merchant_queries').select('*').eq('merchant_name', currentMerchantData.shop_name).order('created_at', { ascending: false });
+        if (error) {
+          queryList.innerHTML = `<div style="font-size:11px; color:#F87171; text-align:center; padding:10px;">${escapeHtml(error.message)}</div>`;
+        } else if (!data || data.length === 0) {
+          queryList.innerHTML = `<div style="font-size:11px; color:#9CA3AF; text-align:center; padding:10px;">${currentLang === 'en' ? 'No queries sent yet.' : 'अभी तक कोई सवाल नहीं भेजा गया।'}</div>`;
+        } else {
+          queryList.innerHTML = buildQueryCardsHTML(data, false);
+          const hasPending = data.some(q => !(q.reply_text || q.staff_reply) && q.status !== 'Replied');
+          const dot = document.getElementById('supportDot');
+          if (dot) dot.style.display = hasPending ? 'block' : 'none';
+        }
+      }
+      if (viewsText) {
+        const { count, error } = await supabaseClient.from('merchant_footprint_analytics').select('id', { count: 'exact', head: true }).eq('merchant_id', currentMerchantData.id);
+        viewsText.innerText = error
+          ? (currentLang === 'en' ? 'Views are currently unavailable.' : 'अभी व्यूज़ उपलब्ध नहीं हैं।')
+          : (currentLang === 'en' ? `Your reels and posts have ${count || 0} total views.` : `आपके कुल वीडियोज़ और पोस्ट्स पर कुल ${count || 0} व्यूज़ हैं।`);
+      }
+    }
+
+    async function submitNotifMerchantQuery() {
+      const input = document.getElementById('supportQueryInput') || document.getElementById('notifMerchantQueryInput');
+      const queryText = input ? input.value.trim() : '';
+      if (!queryText || !currentMerchantData || !supabaseClient) return;
+      const { error } = await supabaseClient.from('merchant_queries').insert([{ merchant_name: currentMerchantData.shop_name, query_text: queryText, status: 'Pending' }]);
+      if (error) return showCustomAlert(currentLang === 'en' ? 'Error' : 'त्रुटि', error.message);
+      input.value = '';
+      await loadFullScreenNotifications();
+      await updateNotificationBadge();
+      showCustomAlert(currentLang === 'en' ? 'Success' : 'सफलता', currentLang === 'en' ? 'Query sent to Admin!' : 'आपकी क्वेरी एडमिन को भेज दी गई है!');
+    }
+
+    function submitSupportQuery() {
+      return submitNotifMerchantQuery();
+    }
+
     function switchMerchantTab(tabName, clickedEl) {
       document.querySelectorAll('.tab-screen').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -1621,6 +2076,7 @@
       if (clickedEl) clickedEl.classList.add('active');
       if(tabName === 'network') fetchB2BNetworkMerchants();
       if(tabName === 'manage-reels' && currentMerchantData) fetchMerchantMedia(currentMerchantData.id);
+      if(tabName === 'notifications') loadFullScreenNotifications();
     }
 
     function showCustomAlert(title, message, html = '', hideDefaultOk = false) {
@@ -1652,31 +2108,24 @@
       return data.map(q => {
         const replyText = q.reply_text || q.staff_reply || '';
         const isPending = !replyText && q.status !== 'Replied';
-        const statusBadge = isPending 
-          ? `<span style="background:#FEF3C7; color:#B45309; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:800;">${currentLang === 'en' ? '⏳ Pending' : '⏳ पेंडिंग'}</span>`
-          : `<span style="background:#D1FAE5; color:#059669; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:800;">${currentLang === 'en' ? '✅ Replied' : '✅ जवाब मिला'}</span>`;
-        
-        const replyBlock = replyText 
-          ? `<div style="margin-top:6px; background:#ECFDF5; border: 1px solid #A7F3D0; padding:8px; border-radius:6px; color:#065F46; font-size:11px; text-align:left;">
-               <b style="font-weight:900;">👑 ${currentLang === 'en' ? 'Admin Reply:' : 'एडमिन रिप्लाई:'}</b><br>
-               ${escapeHtml(replyText)}
-             </div>` 
-          : '';
-
+        const timeText = q.created_at ? new Date(q.created_at).toLocaleString(currentLang === 'en' ? 'en' : 'hi', { dateStyle: 'medium', timeStyle: 'short' }) : '';
         const dismissBtn = allowDismiss
-          ? `<button onclick="dismissSingleNotification('q_${q.id}')" title="हटाएं" style="position:absolute; top:8px; right:8px; background:none; border:none; color:#9CA3AF; font-size:13px; font-weight:900; cursor:pointer;">✕</button>`
+          ? `<button class="notif-dismiss" onclick="dismissSingleNotification('q_${q.id}')" title="${currentLang === 'en' ? 'Dismiss' : 'हटाएं'}">✕</button>`
           : '';
-
+        const replyBlock = replyText
+          ? `<div class="notif-text" style="margin-top:6px; color:#065F46;"><b>👑 ${currentLang === 'en' ? 'Admin Reply:' : 'एडमिन रिप्लाई:'}</b> ${escapeHtml(replyText)}</div>`
+          : '';
         return `
-          <div style="background:#FFFFFF; border:1px solid #D1D5DB; border-radius:8px; padding:10px; margin-bottom:8px; text-align:left; position:relative;">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; ${allowDismiss ? 'padding-right:18px;' : ''}">
-              <div style="color:#111827; font-weight:800; font-size:12px; width:74%;"><svg width="18" height="18" viewBox="0 0 100 100" fill="#111827" style="display:inline-block; vertical-align:middle;"><path d="M 15 15 C 10 15, 10 50, 15 65 L 35 65 L 50 85 L 65 65 L 85 65 C 90 65, 90 15, 85 15 Z"/></svg> ${escapeHtml(q.query_text)}</div>
-              ${statusBadge}
+          <div class="notif-item">
+            <div class="notif-dot" style="background:${isPending ? '#2563EB' : '#9CA3AF'};"></div>
+            <div class="notif-body">
+              <div class="notif-title">${currentLang === 'en' ? 'Support Query' : 'सपोर्ट क्वेरी'} <span style="font-size:10px; color:#6B7280;">${isPending ? (currentLang === 'en' ? '⏳ Pending' : '⏳ पेंडिंग') : (currentLang === 'en' ? '✅ Replied' : '✅ जवाब मिला')}</span></div>
+              <div class="notif-text">${escapeHtml(q.query_text || '')}</div>
+              ${replyBlock}
+              ${timeText ? `<div class="notif-time">${escapeHtml(timeText)}</div>` : ''}
             </div>
             ${dismissBtn}
-            ${replyBlock}
-          </div>
-        `;
+          </div>`;
       }).join('');
     }
 
@@ -1805,13 +2254,19 @@
         const { data: bData } = await supabaseClient.from('broadcast_center').select('id, broadcast_title, message_content, created_at').order('created_at', { ascending: false });
         if (bData && bData.length > 0) {
           const visibleBroadcasts = bData.filter(b => !dismissed.includes(`b_${b.id}`));
-          combinedHtml += visibleBroadcasts.map(b => `
-            <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:8px; padding:10px; margin-bottom:8px; text-align:left; position:relative;">
-              <button onclick="dismissSingleNotification('b_${b.id}')" title="हटाएं" style="position:absolute; top:6px; right:8px; background:none; border:none; color:#9CA3AF; font-size:14px; font-weight:900; cursor:pointer;">✕</button>
-              <div style="font-size:12px; font-weight:900; color:#B45309; padding-right:18px;">📢 ${escapeHtml(b.broadcast_title || 'Admin Broadcast')}</div>
-              <div style="font-size:11px; color:#111827; margin-top:4px;">${escapeHtml(b.message_content || '')}</div>
-            </div>
-          `).join('');
+          combinedHtml += visibleBroadcasts.map(b => {
+            const timeText = b.created_at ? new Date(b.created_at).toLocaleString(currentLang === 'en' ? 'en' : 'hi', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+            return `
+            <div class="notif-item" style="background:#FFFBEB; border-color:#FDE68A;">
+              <div class="notif-dot" style="background:#F59E0B;"></div>
+              <div class="notif-body">
+                <div class="notif-title">📢 ${escapeHtml(b.broadcast_title || (currentLang === 'en' ? 'Admin Broadcast' : 'एडमिन सूचना'))}</div>
+                <div class="notif-text">${escapeHtml(b.message_content || '')}</div>
+                ${timeText ? `<div class="notif-time">${escapeHtml(timeText)}</div>` : ''}
+              </div>
+              <button class="notif-dismiss" onclick="dismissSingleNotification('b_${b.id}')" title="हटाएं">✕</button>
+            </div>`;
+          }).join('');
         }
       } catch (e) {}
 
