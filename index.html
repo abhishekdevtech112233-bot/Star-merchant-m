@@ -7,6 +7,25 @@
   <meta charset="UTF-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <script>
+    // मोबाइल ब्राउज़र के डेस्कटॉप मोड को ओवरराइड करने के लिए
+    const viewportMeta = document.querySelector('meta[name="viewport"]');
+    if (viewportMeta) {
+      viewportMeta.content = 'width=480, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover';
+    }
+
+    function lockMobileViewport() {
+      const shell = document.getElementById('appDeviceShell');
+      const screenWidth = window.innerWidth;
+      if (shell && screenWidth > 480) {
+        // चौड़ी स्क्रीन पर शेल को केंद्र में रखकर 480px तक सीमित रखें।
+        shell.style.margin = '0 auto';
+        shell.style.maxWidth = '480px';
+      }
+    }
+    window.addEventListener('resize', lockMobileViewport);
+    window.addEventListener('DOMContentLoaded', lockMobileViewport);
+  </script>
   <meta name="theme-color" content="#F8F9FA" id="appThemeColor">
   <script>try { if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.classList.add('system-dark'); } catch (e) {}</script>
   <title>Star Merchant - Secure Dashboard</title>
@@ -40,6 +59,11 @@
     body { background-color: #E5E7EB; display: flex; justify-content: center; overflow-x: hidden; }
     .device-shell { width: 100%; max-width: 480px; min-height: 100dvh; background-color: #F8F9FA; position: relative; display: flex; flex-direction: column;  padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
     box-shadow: 0 0 20px rgba(0,0,0,0.1); background-clip: padding-box; }
+    .device-shell {
+      width: 100% !important;
+      max-width: 480px !important;
+      margin: 0 auto !important;
+    }
     .top-header { background-color: #FFFFFF; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E9ECEF; position: sticky; top: 0; z-index: 40; width: 100%; }
     .brand-title { font-size: 16px; font-weight: 900; letter-spacing: 0.5px; color: #111827; display: flex; align-items: center; gap: 5px; user-select: none; }
     .brand-title .star-badge { color: #F59E0B; font-size: 15px; }
@@ -317,7 +341,7 @@
     </div>
   </div>
 
-  <div class="device-shell">
+  <div class="device-shell" id="appDeviceShell">
     <header class="top-header" id="merchantHeader">
       <div class="brand-title"><span class="star-badge">★</span> STAR MERCHANT</div>
       <div class="header-right-box">
@@ -664,6 +688,36 @@
     </div>
   </div>
 
+  <div id="merchantExpiryPopup" style="position:fixed; inset:0; background:rgba(0,0,0,0.85); display:none; align-items:center; justify-content:center; z-index:100000000; backdrop-filter:blur(5px); padding:16px;">
+    <div style="background:#16161a; width:90%; max-width:340px; border-radius:20px; padding:22px; color:#fff; border:1px solid #27272a;">
+      <div style="font-size:16px; font-weight:900; margin-bottom:14px; color:#F59E0B; text-align:center;">⏰ ऑफर की वैलिडिटी सेट करें</div>
+      <label style="display:flex; align-items:center; gap:10px; margin-bottom:12px; font-size:13px; cursor:pointer; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid #27272a;">
+        <input type="radio" name="merchantExpiryChoice" value="lifetime" checked onclick="toggleDurationBox(false)" style="accent-color:#F59E0B;">
+        <span>लाइफटाइम (हमेशा के लिए)</span>
+      </label>
+      <label style="display:flex; align-items:center; gap:10px; margin-bottom:14px; font-size:13px; cursor:pointer; background:rgba(255,255,255,0.03); padding:10px; border-radius:10px; border:1px solid #27272a;">
+        <input type="radio" name="merchantExpiryChoice" value="limited" onclick="toggleDurationBox(true)" style="accent-color:#F59E0B;">
+        <span>तय समय के लिए (Hours / Days)</span>
+      </label>
+      <div id="durationSelectorBox" style="display:none; margin-bottom:16px; text-align:left; background:rgba(0,0,0,0.4); padding:12px; border-radius:10px; border:1px solid #3f3f46;">
+        <label style="font-size:11px; color:#9CA3AF; display:block; margin-bottom:6px; font-weight:700;">कितने समय बाद बंद होना चाहिए?</label>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:8px;">
+          <button type="button" onclick="setDurationHours(6)" style="padding:8px; background:#27272a; color:#fff; border:1px solid #3f3f46; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer;">6 घंटे</button>
+          <button type="button" onclick="setDurationHours(12)" style="padding:8px; background:#27272a; color:#fff; border:1px solid #3f3f46; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer;">12 घंटे</button>
+          <button type="button" onclick="setDurationHours(24)" style="padding:8px; background:#27272a; color:#fff; border:1px solid #3f3f46; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer;">24 घंटे</button>
+          <button type="button" onclick="setDurationDays(2)" style="padding:8px; background:#27272a; color:#fff; border:1px solid #3f3f46; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer;">2 दिन</button>
+          <button type="button" onclick="setDurationDays(3)" style="padding:8px; background:#27272a; color:#fff; border:1px solid #3f3f46; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer;">3 दिन</button>
+          <button type="button" onclick="setDurationDays(7)" style="padding:8px; background:#27272a; color:#fff; border:1px solid #3f3f46; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer;">7 दिन</button>
+        </div>
+        <input type="number" id="customDurationInput" min="1" step="1" inputmode="numeric" placeholder="या अपने हिसाब से घंटे लिखें (जैसे: 10)" style="width:100%; padding:8px; background:#111; color:#fff; border:1px solid #3f3f46; border-radius:6px; font-size:12px; outline:none;">
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button type="button" onclick="closeMerchantExpiryPopup()" style="flex:1; padding:10px; background:#27272a; color:#fff; border:none; border-radius:8px; font-weight:800; cursor:pointer;">रद्द करें</button>
+        <button type="button" onclick="confirmAndUploadMedia()" style="flex:1; padding:10px; background:#F59E0B; color:#0b0b0f; border:none; border-radius:8px; font-weight:900; cursor:pointer;">ओके (अपलोड)</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const SUPABASE_URL = 'https://fzerbvhdaqifaeabdjkj.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable_ajo-GdO4PcqhQDTcde9m7w_Ib6kzaVM';
@@ -682,6 +736,8 @@
     let activeSelectedVideoFile = null;
     let activeVideoEventTarget = null;
     let activeVideoPreviewUrl = '';
+    let pendingMerchantMediaUpload = null;
+    let selectedExpiryHours = 0;
     let lastUploadTimestamp = 0;
     const UPLOAD_COOLDOWN_MS = 3000;
     let longPressTimer = null;
@@ -1322,7 +1378,7 @@
         if (isBanner) {
           openBannerCropPopup(finalFile);
         } else {
-          await executeMediaUploadToSupabase(finalFile, 'image', event);
+          openMerchantExpiryPopup(finalFile, 'image', event.target, undefined);
         }
       } catch (error) {
         console.error('Image conversion failed:', error);
@@ -1429,6 +1485,86 @@
       }
     }
 
+    function toggleDurationBox(show) {
+      const box = document.getElementById('durationSelectorBox');
+      if (box) box.style.display = show ? 'block' : 'none';
+      if (!show) {
+        selectedExpiryHours = 0;
+        const input = document.getElementById('customDurationInput');
+        if (input) input.value = '';
+      }
+    }
+
+    function setDurationHours(hours) {
+      selectedExpiryHours = Number(hours);
+      const input = document.getElementById('customDurationInput');
+      if (input) input.value = String(selectedExpiryHours);
+    }
+
+    function setDurationDays(days) {
+      setDurationHours(Number(days) * 24);
+    }
+
+    function openMerchantExpiryPopup(file, type, eventTarget, caption) {
+      pendingMerchantMediaUpload = { file, type, eventTarget, caption };
+      selectedExpiryHours = 0;
+      const lifetimeRadio = document.querySelector('input[name="merchantExpiryChoice"][value="lifetime"]');
+      const durationInput = document.getElementById('customDurationInput');
+      const popup = document.getElementById('merchantExpiryPopup');
+      if (lifetimeRadio) lifetimeRadio.checked = true;
+      if (durationInput) durationInput.value = '';
+      toggleDurationBox(false);
+      if (popup) popup.style.display = 'flex';
+    }
+
+    function closeMerchantExpiryPopup() {
+      const popup = document.getElementById('merchantExpiryPopup');
+      if (popup) popup.style.display = 'none';
+      pendingMerchantMediaUpload = null;
+      selectedExpiryHours = 0;
+    }
+
+    async function confirmAndUploadMedia() {
+      if (!pendingMerchantMediaUpload || !currentMerchantData) {
+        closeMerchantExpiryPopup();
+        return;
+      }
+
+      const selectedChoice = document.querySelector('input[name="merchantExpiryChoice"]:checked');
+      if (!selectedChoice) {
+        return showCustomAlert(currentLang === 'en' ? 'Choose validity' : 'वैलिडिटी चुनें', currentLang === 'en' ? 'Please choose lifetime or a limited duration.' : 'कृपया लाइफटाइम या तय अवधि चुनें।');
+      }
+
+      let expiresAt = null;
+      if (selectedChoice.value === 'limited') {
+        const rawCustom = document.getElementById('customDurationInput')?.value.trim() || '';
+        const hours = rawCustom ? Number(rawCustom) : Number(selectedExpiryHours);
+        if (!Number.isSafeInteger(hours) || hours <= 0) {
+          return showCustomAlert(currentLang === 'en' ? 'Invalid duration' : 'गलत अवधि', currentLang === 'en' ? 'Please enter a valid number of hours greater than zero.' : 'कृपया शून्य से अधिक सही घंटे या दिन चुनें।');
+        }
+        const expiryDate = new Date(Date.now() + hours * 60 * 60 * 1000);
+        if (!Number.isFinite(expiryDate.getTime())) {
+          return showCustomAlert(currentLang === 'en' ? 'Invalid duration' : 'गलत अवधि', currentLang === 'en' ? 'That duration is too large. Please enter a smaller number of hours.' : 'यह अवधि बहुत बड़ी है। कृपया इससे कम घंटे दर्ज करें।');
+        }
+        expiresAt = expiryDate.toISOString();
+      }
+
+      const now = Date.now();
+      if (now - lastUploadTimestamp < UPLOAD_COOLDOWN_MS) {
+        const remainingSeconds = Math.ceil((UPLOAD_COOLDOWN_MS - (now - lastUploadTimestamp)) / 1000);
+        return showCustomAlert(currentLang === 'en' ? 'Please wait' : 'कृपया रुकें', currentLang === 'en' ? `Please wait ${remainingSeconds} second(s) before uploading again.` : `कृपया अगला अपलोड करने से पहले ${remainingSeconds} सेकंड रुकें।`);
+      }
+
+      const upload = pendingMerchantMediaUpload;
+      pendingMerchantMediaUpload = null;
+      selectedExpiryHours = 0;
+      const popup = document.getElementById('merchantExpiryPopup');
+      if (popup) popup.style.display = 'none';
+      lastUploadTimestamp = Date.now();
+      console.log('Final expires_at for DB:', expiresAt);
+      await executeMediaUploadToSupabaseWithCaption(upload.file, upload.type, upload.eventTarget, upload.caption, expiresAt);
+    }
+
     function closeVideoEditor() {
       const overlay = document.getElementById('videoEditorOverlay');
       const videoPrev = document.getElementById('editorVideoPreview');
@@ -1460,19 +1596,7 @@
       const eventTarget = activeVideoEventTarget;
       closeVideoEditor();
 
-      lastUploadTimestamp = Date.now();
-      const pbContainer = document.getElementById('reelProgressBarContainer');
-      const pbFill = document.getElementById('reelProgressBarFill');
-      const pbText = document.getElementById('reelProgressText');
-      if (pbContainer) {
-        pbContainer.style.display = 'block';
-        if (pbFill) pbFill.style.width = '20%';
-        if (pbText) pbText.innerText = 'अपलोड की तैयारी हो रही है...';
-      }
-
-      setTimeout(async () => {
-        await executeMediaUploadToSupabaseWithCaption(fileToUpload, 'video', eventTarget, finalCaption);
-      }, 1500);
+      openMerchantExpiryPopup(fileToUpload, 'video', eventTarget, finalCaption);
     }
 
     function sanitizeMediaUrl(rawUrl) {
@@ -1495,11 +1619,11 @@
       return next;
     }
 
-    async function executeMediaUploadToSupabase(file, type, event, customCaption) {
-      return executeMediaUploadToSupabaseWithCaption(file, type, event && event.target ? event.target : null, customCaption);
+    async function executeMediaUploadToSupabase(file, type, event, customCaption, expiresAt = null) {
+      return executeMediaUploadToSupabaseWithCaption(file, type, event && event.target ? event.target : null, customCaption, expiresAt);
     }
 
-    async function executeMediaUploadToSupabaseWithCaption(file, type, eventTarget, customCaption) {
+    async function executeMediaUploadToSupabaseWithCaption(file, type, eventTarget, customCaption, expiresAt = null) {
       const captionInput = document.getElementById(type === 'video' ? 'uploadReelCaptionInput' : 'uploadPostCaptionInput');
       const fallbackCaption = type === 'video'
         ? (currentLang === 'en' ? 'Special Offer' : 'विशेष ऑफर')
@@ -1553,8 +1677,8 @@
         const { data: publicUrlData } = supabaseClient.storage.from(uploadSuccessBucket).getPublicUrl(fileName);
         const finalPublicUrl = sanitizeMediaUrl(publicUrlData.publicUrl);
         const payload = type === 'video'
-          ? { merchant_id: currentMerchantData.id, reel_url: finalPublicUrl, caption }
-          : { merchant_id: currentMerchantData.id, post_image_url: finalPublicUrl, caption };
+          ? { merchant_id: currentMerchantData.id, reel_url: finalPublicUrl, caption, merchant_expiry_reel: expiresAt }
+          : { merchant_id: currentMerchantData.id, post_image_url: finalPublicUrl, caption, merchant_expiry_post: expiresAt };
         const { data: insertedRow, error: insertError } = await supabaseClient
           .from(mediaTable)
           .insert([payload])
